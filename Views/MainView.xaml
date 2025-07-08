@@ -1,12 +1,236 @@
-﻿<UserControl x:Class="ACADTools.Views.MainView"
+﻿<Window x:Class="ACADTools.Views.MainView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ACADTools.Views"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
+             xmlns:vm="clr-namespace:ACADTools.ViewModels"
+             mc:Ignorable="d"
+             Title="ACADTools"
+             Height="510" Width="450"
+             Background="WhiteSmoke"
+             WindowStyle="SingleBorderWindow"
+             WindowStartupLocation="CenterOwner"
+             FontFamily="Segoe UI"
+             FontSize="12">
+
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+
+    <Grid Margin="10,15" HorizontalAlignment ="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <!--Schraffur-->
+            <RowDefinition Height="25" /> <!--Checkbox-->
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <!--Block-->
+            <!--Checkbox-->
+            <RowDefinition Height="25" /> 
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <!--Nummergenerierung-->
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <!--Flächengröße-->
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <!--Flächenlisten-->
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <!--Datei-->
+            <RowDefinition Height="25" />
+            <!--Buttons-->
+            <RowDefinition Height="45" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center">Flächen:</Label>
+        <ComboBox Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Height="20"/>
+
+        <Label Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center">Flächeninformation:</Label>
+        <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Height="20" />
+        <CheckBox Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,15,0" Content="gruppieren"/>
+
+        <!--Schraffur-->
+        <CheckBox x:Name="chkHatchingGroup" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" FontWeight="DemiBold" Content="Schraffur"/>
+        <GroupBox IsEnabled="{Binding ElementName=chkHatchingGroup, Path=IsChecked}" Margin="0" BorderBrush="LightGray"
+                  Grid.Row="3" Grid.RowSpan="3"
+                  Grid.Column="0" Grid.ColumnSpan="4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label HorizontalAlignment="Left" VerticalAlignment="Center">Layer:</Label>
+                <ComboBox Grid.ColumnSpan="4" Height="20" Margin="104,2,104,3"/>
+                <CheckBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="15,0,0,0" Content="gruppieren"/>
+
+                <Label Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center">Schraffurtyp:</Label>
+                <ComboBox Grid.Row="1" Grid.ColumnSpan="4" Height="20" Margin="104,3,104,2"/>
+
+                <Label Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.RowSpan="2">Textausrichtung:</Label>
+                <ComboBox Grid.Row="2" Grid.ColumnSpan="2" Height="20" Margin="104,2,0,3" Grid.RowSpan="2"/>
+                <Label Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"
+                       Margin="35,0,0,0">Texthöhe:</Label>
+                <TextBox Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Height="20"/>
+            </Grid>
+        </GroupBox>
+
+        <!--Block-->
+        <CheckBox x:Name="chkBlockGroup" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" FontWeight="DemiBold" Content="Block"/>
+        <GroupBox IsEnabled="{Binding ElementName=chkBlockGroup, Path=IsChecked}" Margin="0" BorderBrush="LightGray"
+          Grid.Row="7" Grid.RowSpan="2"
+          Grid.Column="0" Grid.ColumnSpan="4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label HorizontalAlignment="Left" VerticalAlignment="Center">Layer:</Label>
+                <ComboBox Grid.Column="1" Grid.ColumnSpan="2" Height="20"/>
+                <CheckBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="15,0,0,0" Content="Attribute"/>
+
+                <Label Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center">Einfügepunkt: </Label>
+                <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Height="20"/>
+            </Grid>
+        </GroupBox>
+
+        <!--Nummergenerierung-->
+        <GroupBox Header="Nummergenerierung" Margin="0" BorderBrush="LightGray"
+                  Grid.Row="9" Grid.RowSpan="3"
+                  Grid.Column="0" Grid.ColumnSpan="4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">Vorangestellter Text: </Label>
+                <TextBox Grid.Column="1" Height="20"/>
+
+                <Label Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center">Nachgestellter Text: </Label>
+                <TextBox Grid.Column="3" Height="20"/>
+
+                <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">Startwert: </Label>
+                <TextBox Grid.Row="1" Grid.Column="1" Height="20"/>
+            </Grid>
+        </GroupBox>
+
+        <!--Flächengröße-->
+        <GroupBox Header="Flächengröße" Margin="0" BorderBrush="LightGray"
+          Grid.Row="12" Grid.RowSpan="4"
+          Grid.Column="0" Grid.ColumnSpan="4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">Vorangestellter Text: </Label>
+                <TextBox Grid.Column="1" Height="20"/>
+                <Label Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center">Nachgestellter Text: </Label>
+                <TextBox Grid.Column="3" Height="20"/>
+
+                <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">Flächen-Faktor: </Label>
+                <TextBox Grid.Row="1" Grid.Column="1" Height="20"/>
+                <Label Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center">Dezimalstellen: </Label>
+                <TextBox Grid.Row="1" Grid.Column="3" Height="20"/>
+                <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">Ländereinstellung: </Label>
+                <ComboBox Grid.Row="2" Grid.Column="1" Height="20"/>
+                <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"
+                          VerticalAlignment="Center" HorizontalAlignment="Center" Content="in der Zeichnung eintragen"/>
+            </Grid>
+        </GroupBox>
+
+        <!--Flächenlisten-->
+        <GroupBox Header="Flächenliste" Margin="0" BorderBrush="LightGray"
+                  Grid.Row="16" Grid.RowSpan="5"
+                  Grid.Column="0" Grid.ColumnSpan="4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <CheckBox Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" 
+                          Content="Nummer" IsChecked="True"/>
+                <CheckBox Grid.Row="1" Grid.ColumnSpan="2" 
+                          VerticalAlignment="Center" HorizontalAlignment="Left" Content="Flächengröße" IsChecked="True"/>
+                <CheckBox Grid.Row="2" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Left" 
+                          Content="Erweiterter Text der Flächengröße"/>
+                <CheckBox Grid.Row="3" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Left" 
+                          Content="Dateinamen der Zeichnung" IsChecked="True"/>
+                <CheckBox Grid.Column="2" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Left" 
+                          Content="Referenz der Flächen" IsChecked="True"/>
+                <CheckBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Left" 
+                          Content="Referenz der Schraffur" IsEnabled="{Binding ElementName=chkBlockGroup, Path=IsChecked}"/>
+                <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Left" 
+                          Content="Referenz der Flächeninfürmation" />
+                <CheckBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Left" 
+                          Content="Kopfzeile" IsChecked="True"/>
+            </Grid>
+        </GroupBox>
+
+        <!--Datei-->
+        <Label Grid.Row="21" HorizontalAlignment="Left" VerticalAlignment="Center">Dateiname: </Label>
+        <TextBox Grid.Row="21" Grid.Column="1" Grid.ColumnSpan="3" Margin="0,0,30,0" Height="20" />
+        <Button Grid.Row="21" Grid.Column="3" Height="20" Width="20" HorizontalAlignment="Right" VerticalAlignment="Center" Content="..."/>
+
+        <Button Grid.Row="22" Grid.Column="2" Grid.ColumnSpan="2" Height="25" Width="65" Margin="0,0,80,0"
+                BorderBrush="MediumBlue" BorderThickness="2"
+                HorizontalAlignment="Right" VerticalAlignment="Center" Content="Start" />
+        <Button Grid.Row="22" Grid.Column="3" Height="25" Width="65"
+                HorizontalAlignment="Right" VerticalAlignment="Center" Content="Schließen" />
     </Grid>
-</UserControl>
+</Window>

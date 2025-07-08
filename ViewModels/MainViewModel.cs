@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ACADTools.ViewModels
+﻿namespace ACADTools.ViewModels
 {
-    internal class MainViewModel
+    public class MainViewModel
     {
+        public MainViewModel()
+        {
+
+        }
     }
 }
