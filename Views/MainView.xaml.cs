@@ -11,5 +11,23 @@ namespace ACADTools.Views
         {
             InitializeComponent();
         }
+
+        private void chkHatchingGroup_Checked(object sender, RoutedEventArgs e)
+        {
+            bool isEnabled = uiHatchingGroup.IsEnabled;
+            if (isEnabled == false)
+                uiHatchingGroup.IsEnabled = true;
+            else
+                uiHatchingGroup.IsEnabled = false;
+        }
+
+        private void chkBlockGroup_Checked(object sender, RoutedEventArgs e)
+        {
+            bool isEnabled = uiBlockGroup.IsEnabled;
+            if (isEnabled == false)
+                uiBlockGroup.IsEnabled = true;
+            else
+                uiBlockGroup.IsEnabled = false;
+        }
     }
 }
