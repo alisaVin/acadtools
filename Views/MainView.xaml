@@ -13,7 +13,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/ACADTools;component/Recources/Styles/MainWindowStyle.xaml"/>
+                <ResourceDictionary Source="/ACADTools;component/Views/Styles/MainWindowStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>

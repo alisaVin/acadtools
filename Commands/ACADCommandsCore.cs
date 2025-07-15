@@ -6,6 +6,9 @@ namespace ACADTools.Commands
 {
     public class ACADCommandsCore
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static void CreateRegisterTab()
         {
             var doc = app.DocumentManager.MdiActiveDocument;
@@ -15,22 +18,23 @@ namespace ACADTools.Commands
 
             try
             {
-                //Die AutoCAD-Systemvariable MENUNAME gibt den Dateinamen des Menüs (CUI oder CUIx, soweit es das Menüband betrifft) an.
-                //Das Objekt CustomizationSection ist das Stammobjekt für die AutoCAD CUI .NET API, und alles sollte von dort aus beginnen.
-                //Die CustomizationSection-Instanz sollte möglichst einzeln verwaltet werden. Andernfalls können Synchronisierungsprobleme auftreten.
+                ///<summary>
+                ///Die AutoCAD-Systemvariable MENUNAME gibt den Dateinamen des Menüs (CUI oder CUIx, soweit es das Menüband betrifft) an.
+                ///Das Objekt CustomizationSection ist das Stammobjekt für die AutoCAD CUI .NET API, und alles sollte von dort aus beginnen.
+                ///<params name="cs">Die CustomizationSection-Instanz sollte möglichst einzeln verwaltet werden. Andernfalls können Synchronisierungsprobleme auftreten.</params>
+                ///<params name="curWorkspace">Eine weitere AutoCAD-Systemvariable WSCURRENT gibt den aktuellen Arbeitsbereichsnamen an.</params>
+                /// </summary>
+
                 CustomizationSection cs = new CustomizationSection((string)app.GetSystemVariable("MENUNAME"));
-                //Eine weitere AutoCAD-Systemvariable WSCURRENT gibt den aktuellen Arbeitsbereichsnamen an.
                 string curWorkspace = (string)app.GetSystemVariable("WSCURRENT");
 
-                // WICHTIG: Zuerst alte Tabs entfernen
                 RemoveExistingTabs(cs, curWorkspace, appName, panelName);
-                CreateRibbonTabAndPannel(cs, curWorkspace, appName, panelName);
+                CreateRibbonUI(cs, curWorkspace, appName, panelName);
 
                 if (cs.IsModified)
                 {
                     cs.Save();
-                    // WICHTIG: Ribbon-MenuTabs-Aktualisierung erzwingen
-                    app.ReloadAllMenus(); ///!!!!!!!!
+                    app.ReloadAllMenus();
                     ed.WriteMessage("CUI IS UPDATED AND RIBBON REFRESHED\n");
                 }
             }
@@ -40,11 +44,18 @@ namespace ACADTools.Commands
             }
         }
 
+        /// <summary>
+        /// Entfernt existierende Ribbon Tabs 
+        /// </summary>
+        /// <param name="cs">CustomizationSection Instanz</param>
+        /// <param name="currentWorkspace">WSCURRENT</param>
+        /// <param name="tabName">Name der aktuellen Ribbon Tab</param>
+        /// <param name="panelName">Name des zugehörigen Ribbon Panels</param>
         private static void RemoveExistingTabs(CustomizationSection cs, string currentWorkspace, string tabName, string panelName)
         {
             try
             {
-                // Workspace-Referenzen entfernen CHECKED!!!!
+                // Workspace-Referenzen entfernen 
                 int curWsIndex = cs.Workspaces.IndexOfWorkspaceName(currentWorkspace);
                 if (curWsIndex >= 0)
                 {
@@ -59,11 +70,10 @@ namespace ACADTools.Commands
                     }
                 }
 
-                // TabSources entfernen CHECKED!!!
+                // TabSources entfernen
                 RibbonRoot root = cs.MenuGroup.RibbonRoot;
                 for (int i = root.RibbonTabSources.Count - 1; i >= 0; i--)
                 {
-                    //RibbonTabSource tab = root.RibbonTabSources[i];
                     string tabSourceName = root.RibbonTabSources[i].Name;
                     if (tabSourceName == tabName)
                     {
@@ -71,10 +81,9 @@ namespace ACADTools.Commands
                     }
                 }
 
-                // PanelSources entfernen CHECKED !!!
+                // PanelSources entfernen 
                 for (int i = root.RibbonPanelSources.Count - 1; i >= 0; i--)
                 {
-                    //RibbonPanelSource ribPanelSrc = root.RibbonPanelSources[i];
                     string ribPanelSourceName = root.RibbonPanelSources[i].Name;
                     if (ribPanelSourceName == panelName)
                     {
@@ -91,19 +100,20 @@ namespace ACADTools.Commands
             }
         }
 
-
-        private static void CreateRibbonTabAndPannel(CustomizationSection cs, string currentWorkspace, string tabName, string panelName)
+        /// <summary>
+        /// Erstellt neue Ribbon-Elemente im aktuellen Workspace
+        /// </summary>
+        /// <param name="cs">CustomizationSection Instanz</param>
+        /// <param name="currentWorkspace">WSCURRENT</param>
+        /// <param name="tabName">Name der aktuellen Ribbon Tab</param>
+        /// <param name="panelName">Name des zugehörigen Ribbon Panels</param>
+        private static void CreateRibbonUI(CustomizationSection cs, string currentWorkspace, string tabName, string panelName)
         {
             //RibbonRoot ist das Stammobjekt für alle CUI-Elemente im Zusammenhang mit dem Menüband,
             //die aus der MenuGroup-Eigenschaft des zuvor erstellten CustomizationSection-Objekts abgerufen werden können.
             RibbonRoot root = cs.MenuGroup.RibbonRoot;
             RibbonPanelSourceCollection panels = root.RibbonPanelSources;
-
-            //Erstellt die RibbonPanelSource und fügt sie der RibbonPanelSourceCollection hinzu.
-            RibbonPanelSource panelSrc = new RibbonPanelSource(root);
-            panelSrc.Text = panelSrc.Name = panelName;
-            panelSrc.ElementID = panelSrc.Id = "ID_" + panelName;
-            panels.Add(panelSrc);
+            MacroGroup macroGroup = cs.MenuGroup.MacroGroups[0];
 
             //Erstellt die RibbonTabSource und fügt die zu der RibbonTabSourceCollection hinzu
             //RibbonTabSource definiert grundlegende Informationen zum Menüband-Tab, wie z. B. Tab-Name, Text, ID usw.
@@ -111,6 +121,12 @@ namespace ACADTools.Commands
             tabSrc.Text = tabSrc.Name = tabName;
             tabSrc.ElementID = tabSrc.Id = "ID_" + tabName;
             root.RibbonTabSources.Add(tabSrc);
+
+            //Erstellt die RibbonPanelSource und fügt sie der RibbonPanelSourceCollection hinzu.
+            RibbonPanelSource panelSrc = new RibbonPanelSource(root);
+            panelSrc.Text = panelSrc.Name = panelName;
+            panelSrc.ElementID = panelSrc.Id = "ID_" + panelName;
+            panels.Add(panelSrc);
 
             //Erstellt die RibbonPanelSourceReference und fügt die zu der RibbonPanelSourceReferenceCollection hinzu
             //Die RibbonPanelSourceReference gibt an, wohin die zugehörige RibbonPanelSource verschoben werden soll,
@@ -120,6 +136,35 @@ namespace ACADTools.Commands
             RibbonPanelSourceReference ribPanelSourceRef = new RibbonPanelSourceReference(tabSrc);
             ribPanelSourceRef.PanelId = panelSrc.ElementID;
             tabSrc.Items.Add(ribPanelSourceRef);
+
+            //Rows erstellen
+            RibbonRow row1 = new RibbonRow(panelSrc);
+            panelSrc.Items.Add(row1);
+            RibbonRow row2 = new RibbonRow(panelSrc);
+            panelSrc.Items.Add(row2);
+
+            //Buttons erstellen
+            RibbonCommandButton button1 = new RibbonCommandButton(row1);
+            button1.Text = "Flächen generieren";
+
+            MenuMacro menuMac1 = macroGroup.CreateMenuMacro("button1_macro", "^C^Cbutton1_command", "button1_tag", "button1_help",
+                                                            MacroType.Any, "\\Resources\\generate_16", "\\Resources\\generate_32", "button1_labelID");
+            button1.MacroID = menuMac1.ElementID;
+            button1.ButtonStyle = RibbonButtonStyle.LargeWithText;
+            button1.KeyTip = "button1 Key Tip";
+            button1.TooltipTitle = "Flächen generieren Tooltip Title";
+            row1.Items.Add(button1);
+
+
+            RibbonCommandButton button2 = new RibbonCommandButton(row2);
+            button2.Text = "Info";
+            MenuMacro menuMac2 = macroGroup.CreateMenuMacro("button2_macro", "^C^Cbutton2_command", "button2_tag", "button2_help",
+                                                            MacroType.Any, "\\Resources\\info_16", "\\Resources\\info_32", "button2_labelID");
+            button2.MacroID = menuMac2.ElementID;
+            button2.ButtonStyle = RibbonButtonStyle.SmallWithText;
+            button2.KeyTip = "button2 Key Tip";
+            button2.TooltipTitle = "Info Tooltip Title";
+            row2.Items.Add(button2);
 
             //Erstellt die WorkspaceRibbonTabSourceReference
             //Sie verfügt über eine WorkspaceTabs-Sammlung, die neue Instanzen der WSRibbonTabSourceReference willkommen heißt.

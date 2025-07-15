@@ -58,6 +58,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -71,7 +72,13 @@
     <Compile Include="Commands\ACADCommandsCore.cs" />
     <Compile Include="Commands\ACADCommandsMethods.cs" />
     <Compile Include="Commands\DemandLoading.cs" />
+    <Compile Include="Commands\IconManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\MainView.xaml.cs">
@@ -87,15 +94,17 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="README.txt" />
-    <Resource Include="Recources\Icons\AreaList16.bmp" />
-    <Resource Include="Recources\Icons\AreaList24.bmp" />
-    <Resource Include="Recources\Icons\CheckBlocks16.bmp" />
-    <Resource Include="Recources\Icons\CheckBlocks24.bmp" />
-    <Resource Include="Recources\Icons\DeleteGroups16.bmp" />
-    <Resource Include="Recources\Icons\DeleteGroups24.bmp" />
+    <None Include="Resources\info_32.bmp" />
+    <None Include="Resources\info_16.bmp" />
+    <None Include="Resources\generate_32.bmp" />
+    <None Include="Resources\generate_16.bmp" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Recources\Styles\MainWindowStyle.xaml">
+    <Page Include="Views\Styles\MainWindowStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
