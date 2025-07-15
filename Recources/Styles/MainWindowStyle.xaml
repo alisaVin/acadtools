@@ -54,8 +54,8 @@
     <Style x:Key="StartBtnStyle" TargetType="Button">
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="FontWeight" Value="DemiBold"/>
-        <Setter Property="Foreground" Value="WhiteSmoke"/>
-        <Setter Property="Background" Value="DarkCyan" />
+        <Setter Property="Foreground" Value="Black" />
+        <Setter Property="BorderBrush" Value="DarkCyan" />
         <Setter Property="HorizontalAlignment" Value="Right" />
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="Height" Value="25"/>

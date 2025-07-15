@@ -1,6 +1,4 @@
-﻿using ACADTools.Views;
-using Autodesk.AutoCAD.Runtime;
-using app = Autodesk.AutoCAD.ApplicationServices.Application;
+﻿using Autodesk.AutoCAD.Runtime;
 
 namespace ACADTools.Commands
 {
@@ -10,8 +8,9 @@ namespace ACADTools.Commands
         [CommandMethod("ACADTOOLS")]
         public void ModelessWpfDialogCmd()
         {
-            var dialog = new MainView();
-            var result = app.ShowModalWindow(dialog);
+            //var dialog = new MainView();
+            //var result = app.ShowModalWindow(dialog);
+            ACADCommandsCore.CreateRegisterTab();
         }
         #endregion
 

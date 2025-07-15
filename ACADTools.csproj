@@ -38,12 +38,20 @@
       <HintPath>..\..\..\..\..\ObjectARX\ObjectARX_2021\inc\AcCoreMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="AcCui">
+      <HintPath>..\..\..\..\..\ObjectARX\ObjectARX_2021\inc\AcCui.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="AcDbMgd">
       <HintPath>..\..\..\..\..\ObjectARX\ObjectARX_2021\inc\AcDbMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="AcMgd">
       <HintPath>..\..\..\..\..\ObjectARX\ObjectARX_2021\inc\AcMgd.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AdWindows">
+      <HintPath>..\..\..\..\..\ObjectARX\ObjectARX_2021\inc\AdWindows.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
@@ -79,6 +87,12 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="README.txt" />
+    <Resource Include="Recources\Icons\AreaList16.bmp" />
+    <Resource Include="Recources\Icons\AreaList24.bmp" />
+    <Resource Include="Recources\Icons\CheckBlocks16.bmp" />
+    <Resource Include="Recources\Icons\CheckBlocks24.bmp" />
+    <Resource Include="Recources\Icons\DeleteGroups16.bmp" />
+    <Resource Include="Recources\Icons\DeleteGroups24.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Recources\Styles\MainWindowStyle.xaml">
