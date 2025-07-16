@@ -1,5 +1,6 @@
-﻿using System.IO;
-using System.Reflection;
+﻿using System;
+using System.Drawing;
+using System.IO;
 
 namespace ACADTools.Commands
 {
@@ -8,31 +9,45 @@ namespace ACADTools.Commands
     /// </summary>
     public static class IconManager
     {
-        private static readonly Assembly _assembly;
-
-        static IconManager()
+        public static string GetIconPath(string name)
         {
-            _assembly = Assembly.GetExecutingAssembly();
-        }
-
-        public static string GetIcon(string name)
-        {
-
-            var allResNames = _assembly.GetManifestResourceNames();
-
-            foreach (var resName in allResNames)
+            try
             {
-                if (resName != null && resName == name)
-                {
-                    using (Stream resStream = _assembly.GetManifestResourceStream(resName))
-                    {
+                object resource = Properties.Resources.ResourceManager.GetObject(name);
+                string tempDir = Path.Combine(Path.GetTempPath(), "ACADTools_Icons");
+                if (!Directory.Exists(tempDir))
+                    Directory.CreateDirectory(tempDir);
 
+                if (resource != null)
+                {
+                    string fileName = $"{name}.bmp";
+                    string filePath = Path.Combine(tempDir, fileName);
+
+                    if (File.Exists(filePath))
+                        return filePath;
+
+                    // Eventuelle Dateisperrung vermeiden
+                    if (resource is Bitmap bitmap)
+                    {
+                        using (var clonedBitmap = new Bitmap(bitmap))
+                            clonedBitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
                     }
+                    return filePath;
+                }
+                else
+                {
+                    return "RCDATA_16_MODIFY";
+                    throw new ArgumentException($"Resource '{resource}' not found in VS Resources"); //???
                 }
 
-
             }
-            return "RCDATA_16_OSNAP";
+            catch (System.Exception ex)
+            {
+                var ed = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Editor;
+                ed.WriteMessage($"Thrown the exception during the icons extraction: {ex.Message} \n {ex.StackTrace}");
+                return null;
+            }
+
         }
     }
 }

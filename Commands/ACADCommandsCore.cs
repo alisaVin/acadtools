@@ -140,15 +140,15 @@ namespace ACADTools.Commands
             //Rows erstellen
             RibbonRow row1 = new RibbonRow(panelSrc);
             panelSrc.Items.Add(row1);
-            RibbonRow row2 = new RibbonRow(panelSrc);
-            panelSrc.Items.Add(row2);
 
             //Buttons erstellen
             RibbonCommandButton button1 = new RibbonCommandButton(row1);
             button1.Text = "Flächen generieren";
+            string smallIcon1 = IconManager.GetIconPath("generate_16");
+            string largeIcon1 = IconManager.GetIconPath("generate_32");
 
             MenuMacro menuMac1 = macroGroup.CreateMenuMacro("button1_macro", "^C^Cbutton1_command", "button1_tag", "button1_help",
-                                                            MacroType.Any, "\\Resources\\generate_16", "\\Resources\\generate_32", "button1_labelID");
+                                                            MacroType.Any, smallIcon1, largeIcon1, "button1_labelID");
             button1.MacroID = menuMac1.ElementID;
             button1.ButtonStyle = RibbonButtonStyle.LargeWithText;
             button1.KeyTip = "button1 Key Tip";
@@ -156,15 +156,18 @@ namespace ACADTools.Commands
             row1.Items.Add(button1);
 
 
-            RibbonCommandButton button2 = new RibbonCommandButton(row2);
+            RibbonCommandButton button2 = new RibbonCommandButton(row1);
             button2.Text = "Info";
+            string smallIcon2 = IconManager.GetIconPath("info_16");
+            string largeIcon2 = IconManager.GetIconPath("info_32");
+
             MenuMacro menuMac2 = macroGroup.CreateMenuMacro("button2_macro", "^C^Cbutton2_command", "button2_tag", "button2_help",
-                                                            MacroType.Any, "\\Resources\\info_16", "\\Resources\\info_32", "button2_labelID");
+                                                            MacroType.Any, smallIcon2, largeIcon2, "button2_labelID");
             button2.MacroID = menuMac2.ElementID;
             button2.ButtonStyle = RibbonButtonStyle.SmallWithText;
             button2.KeyTip = "button2 Key Tip";
             button2.TooltipTitle = "Info Tooltip Title";
-            row2.Items.Add(button2);
+            row1.Items.Add(button2);
 
             //Erstellt die WorkspaceRibbonTabSourceReference
             //Sie verfügt über eine WorkspaceTabs-Sammlung, die neue Instanzen der WSRibbonTabSourceReference willkommen heißt.
