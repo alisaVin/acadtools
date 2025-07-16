@@ -8,8 +8,8 @@
         <Setter Property="FontFamily" Value="Segoe UI"/>
         <Setter Property="FontWeight" Value="Regular"/>
         <Setter Property="FontSize" Value="12"/>
-        <Setter Property="MinHeight" Value="650"/>
-        <Setter Property="MinWidth" Value="450"/>
+        <!--<Setter Property="MinHeight" Value="650"/>
+        <Setter Property="MinWidth" Value="450"/>-->
     </Style>
     
     <!--Base label-->

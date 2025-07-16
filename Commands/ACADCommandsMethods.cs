@@ -1,4 +1,6 @@
-﻿using Autodesk.AutoCAD.Runtime;
+﻿using ACADTools.Views;
+using Autodesk.AutoCAD.Runtime;
+using app = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace ACADTools.Commands
 {
@@ -8,11 +10,37 @@ namespace ACADTools.Commands
         [CommandMethod("ACADTOOLS")]
         public void ModelessWpfDialogCmd()
         {
-            //var dialog = new MainView();
-            //var result = app.ShowModalWindow(dialog);
-            ACADCommandsCore.CreateRegisterTab();
+
+            ACADCommandsRibbon.CreateRegisterTab();
         }
         #endregion
+
+        #region Generate area lists dialog window
+        [CommandMethod("GENERATEAREALISTS")]
+        public void GenerateAreaListsDialogCmd()
+        {
+            var mainDialog = new MainView();
+            var result = app.ShowModalWindow(mainDialog);
+        }
+        #endregion
+
+        #region Close ACADTools
+        [CommandMethod("CLOSEACADTOOLS")]
+        public void CloseAcadTools()
+        {
+            ACADCommandsRibbon.RemoveExistingTabs();
+        }
+        #endregion
+
+        #region Info to ACADTools
+        [CommandMethod("INFOACADTOOLS")]
+        public void InfoAcadTools()
+        {
+            var infoDialog = new InfoView();
+            var res = app.ShowModalWindow(infoDialog);
+        }
+        #endregion
+
 
         #region Commands to register this plugin
         [CommandMethod("REGACADTOOL")]

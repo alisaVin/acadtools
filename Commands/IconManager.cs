@@ -20,7 +20,7 @@ namespace ACADTools.Commands
 
                 if (resource != null)
                 {
-                    string fileName = $"{name}.bmp";
+                    string fileName = $"{name}.";
                     string filePath = Path.Combine(tempDir, fileName);
 
                     if (File.Exists(filePath))

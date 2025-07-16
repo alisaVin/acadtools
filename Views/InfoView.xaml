@@ -1,0 +1,40 @@
+﻿<Window x:Class="ACADTools.Views.InfoView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ACADTools.Views"
+        mc:Ignorable="d"
+        Title="Information"
+        FontFamily="Segoe UI"
+        MinWidth="350" MinHeight="150"
+        SizeToContent="WidthAndHeight">
+
+    <!--<Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/ACADTools;component/Views/Styles/MainWindowStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>-->
+
+    <Grid Margin="10,15" MinWidth="350" MinHeight="150">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0"
+               FontSize="18" FontWeight="DemiBold">ACADTools Version 1.0.0.1</Label>
+        <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"
+               FontSize="14">für AutoCAD 2021-2024 (64 bit)</Label>
+        <Image Grid.Row="2" Source="/ACADTools;component/Resources/kres_logo_32.png"/>
+        <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="3"
+               FontSize="14">Keßler Real Estate Solutions GmbH</Label>
+        <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4"
+               FontSize="14">Copyright © 2025</Label>
+    </Grid>
+</Window>
