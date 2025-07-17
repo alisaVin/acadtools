@@ -22,7 +22,7 @@ namespace ACADTools.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace ACADTools.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ACADTools.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace ACADTools.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,9 +63,9 @@ namespace ACADTools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap close_16 {
+        public static System.Drawing.Bitmap CD_Logo_freigestellt {
             get {
-                object obj = ResourceManager.GetObject("close_16", resourceCulture);
+                object obj = ResourceManager.GetObject("CD_Logo_freigestellt", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace ACADTools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap close_32 {
+        public static System.Drawing.Bitmap icons8_close_16 {
             get {
-                object obj = ResourceManager.GetObject("close_32", resourceCulture);
+                object obj = ResourceManager.GetObject("icons8_close_16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace ACADTools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap generate_16 {
+        public static System.Drawing.Bitmap icons8_close_32 {
             get {
-                object obj = ResourceManager.GetObject("generate_16", resourceCulture);
+                object obj = ResourceManager.GetObject("icons8_close_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace ACADTools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap generate_32 {
+        public static System.Drawing.Bitmap icons8_information_16 {
             get {
-                object obj = ResourceManager.GetObject("generate_32", resourceCulture);
+                object obj = ResourceManager.GetObject("icons8_information_16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace ACADTools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap info_16 {
+        public static System.Drawing.Bitmap icons8_information_32 {
             get {
-                object obj = ResourceManager.GetObject("info_16", resourceCulture);
+                object obj = ResourceManager.GetObject("icons8_information_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,9 +113,9 @@ namespace ACADTools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap info_32 {
+        public static System.Drawing.Bitmap icons8_new_file_16 {
             get {
-                object obj = ResourceManager.GetObject("info_32", resourceCulture);
+                object obj = ResourceManager.GetObject("icons8_new_file_16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,9 +123,9 @@ namespace ACADTools.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap kres_logo_32 {
+        public static System.Drawing.Bitmap icons8_new_file_32 {
             get {
-                object obj = ResourceManager.GetObject("kres_logo_32", resourceCulture);
+                object obj = ResourceManager.GetObject("icons8_new_file_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

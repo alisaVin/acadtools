@@ -10,31 +10,25 @@
         MinWidth="350" MinHeight="150"
         SizeToContent="WidthAndHeight">
 
-    <!--<Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/ACADTools;component/Views/Styles/MainWindowStyle.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>-->
-
     <Grid Margin="10,15" MinWidth="350" MinHeight="150">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
             <RowDefinition Height="40" />
+            <RowDefinition Height="15" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0"
-               FontSize="18" FontWeight="DemiBold">ACADTools Version 1.0.0.1</Label>
+               FontSize="16" FontWeight="DemiBold">ACADTools Version 1.0.0.1</Label>
         <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"
-               FontSize="14">für AutoCAD 2021-2024 (64 bit)</Label>
-        <Image Grid.Row="2" Source="/ACADTools;component/Resources/kres_logo_32.png"/>
-        <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="3"
-               FontSize="14">Keßler Real Estate Solutions GmbH</Label>
-        <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4"
-               FontSize="14">Copyright © 2025</Label>
+               FontSize="12">für AutoCAD 2021-2024 (64 bit)</Label>
+        <Image x:Name="kresLogo" Grid.Row="3" Source="/ACADTools;component/Resources/CD-Logo_freigestellt.png"/>
+        <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="5"
+               FontSize="10">Keßler Real Estate Solutions GmbH</Label>
+        <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="6"
+               FontSize="10">Copyright © 2025</Label>
     </Grid>
 </Window>

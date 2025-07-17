@@ -172,8 +172,8 @@ namespace ACADTools.Commands
             //Buttons erstellen
             RibbonCommandButton generateBtn = new RibbonCommandButton(largeRow);
             generateBtn.Text = "Flächenlisten generieren";
-            string smallGenerateIcon = IconManager.GetIconPath("generate_16");
-            string largeGenerateIcon = IconManager.GetIconPath("generate_32");
+            string smallGenerateIcon = IconManager.GetIconPath("icons8-new-file-16");
+            string largeGenerateIcon = IconManager.GetIconPath("icons8-new-file-32");
 
             MenuMacro menuMac1 = macroGroup.CreateMenuMacro("generateBtn_macro", "^C^CGENERATEAREALISTS", "generateBtn_tag", "Bereitet die Blockdefinitionen zum CSV-Import vor",
                                                             MacroType.Any, smallGenerateIcon, largeGenerateIcon, "generateBtn_labelID");
@@ -186,8 +186,8 @@ namespace ACADTools.Commands
 
             RibbonCommandButton infoBtn = new RibbonCommandButton(firstRow);
             infoBtn.Text = "Info";
-            string smallInfoIcon = IconManager.GetIconPath("info_16");
-            string largeInfoIcon = IconManager.GetIconPath("info_32");
+            string smallInfoIcon = IconManager.GetIconPath("icons8-information-16");
+            string largeInfoIcon = IconManager.GetIconPath("icons8-information-32");
 
             MenuMacro menuMac2 = macroGroup.CreateMenuMacro("infoBtn_macro", "^C^CINFOACADTOOLS", "infoBtn_tag", "Informationen zur aktuellen Plug-In Version",
                                                             MacroType.Any, smallInfoIcon, largeInfoIcon, "infoBtn_labelID");
@@ -200,8 +200,8 @@ namespace ACADTools.Commands
 
             RibbonCommandButton closeBtn = new RibbonCommandButton(secondRow);
             closeBtn.Text = "ACADTools beenden";
-            string smallCloseIcon = IconManager.GetIconPath("close_16");
-            string largeCloseIcon = IconManager.GetIconPath("close_32");
+            string smallCloseIcon = IconManager.GetIconPath("icons8-close-16");
+            string largeCloseIcon = IconManager.GetIconPath("icons8-close-32");
 
             MenuMacro menuMacClose = macroGroup.CreateMenuMacro("closeBtn_macro", "^C^CCLOSEACADTOOLS", "closeBtn_tag", "Beendet die Anwendung vom ACADTools Plug-In",
                                                             MacroType.Any, smallCloseIcon, largeCloseIcon, "closeBtn_labelID");

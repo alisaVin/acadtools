@@ -29,6 +29,7 @@ namespace ACADTools.Commands
         public void CloseAcadTools()
         {
             ACADCommandsRibbon.RemoveExistingTabs();
+            IconManager.Cleanup();
         }
         #endregion
 

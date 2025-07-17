@@ -1,53 +1,103 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 
 namespace ACADTools.Commands
 {
     /// <summary>
-    /// Kombiniert Embedded Resources mit temporärer Extraktion für maximale Deployment-Sicherheit
+    /// Extrahiert Icons für Ribbon Buttons aus den Projekt Ressourcen
     /// </summary>
     public static class IconManager
     {
+        private static readonly Dictionary<string, string> _cachedPaths = new Dictionary<string, string>();
+        private static readonly string _tempDir = Path.Combine(Path.GetTempPath(), "ACADTools_Icons");
+
+        static IconManager()
+        {
+            if (!Directory.Exists(_tempDir))
+                Directory.CreateDirectory(_tempDir);
+        }
+
         public static string GetIconPath(string name)
+        {
+            // Cache prüfen
+            if (_cachedPaths.ContainsKey(name))
+                return _cachedPaths[name];
+
+            try
+            {
+                string filePath = Path.Combine(_tempDir, $"{name}.png");
+
+                // Wenn die Datei bereits extrahiert
+                if (File.Exists(filePath))
+                {
+                    _cachedPaths[name] = filePath;
+                    return filePath;
+                }
+
+                // Über Properties.Resources (wenn als Resource hinzugefügt)
+                object resource = Properties.Resources.ResourceManager.GetObject(name.Replace("-", "_"));
+                if (resource is Bitmap bitmap)
+                {
+                    using (var clonedBitmap = new Bitmap(bitmap))
+                    {
+                        clonedBitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Png);
+                        _cachedPaths[name] = filePath;
+                        return filePath;
+                    }
+                }
+
+                // Fallback: Standard AutoCAD Icon
+                return "RCDATA_16_MODIFY";
+            }
+            catch (Exception ex)
+            {
+                var ed = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument?.Editor;
+                ed?.WriteMessage($"Icon extraction failed for '{name}': {ex.Message}\n");
+                return "RCDATA_16_MODIFY";
+            }
+        }
+
+        /// <summary>
+        /// Aufräumen der temporären Dateien beim Shutdown
+        /// </summary>
+        public static void Cleanup()
         {
             try
             {
-                object resource = Properties.Resources.ResourceManager.GetObject(name);
-                string tempDir = Path.Combine(Path.GetTempPath(), "ACADTools_Icons");
-                if (!Directory.Exists(tempDir))
-                    Directory.CreateDirectory(tempDir);
-
-                if (resource != null)
-                {
-                    string fileName = $"{name}.";
-                    string filePath = Path.Combine(tempDir, fileName);
-
-                    if (File.Exists(filePath))
-                        return filePath;
-
-                    // Eventuelle Dateisperrung vermeiden
-                    if (resource is Bitmap bitmap)
-                    {
-                        using (var clonedBitmap = new Bitmap(bitmap))
-                            clonedBitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-                    }
-                    return filePath;
-                }
-                else
-                {
-                    return "RCDATA_16_MODIFY";
-                    throw new ArgumentException($"Resource '{resource}' not found in VS Resources"); //???
-                }
-
+                if (Directory.Exists(_tempDir))
+                    Directory.Delete(_tempDir, true);
             }
-            catch (System.Exception ex)
-            {
-                var ed = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Editor;
-                ed.WriteMessage($"Thrown the exception during the icons extraction: {ex.Message} \n {ex.StackTrace}");
-                return null;
-            }
-
+            catch { }
         }
     }
 }
+
+// Direkt aus Assembly (wenn als Embedded Resource)
+//var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+//var resourceNames = assembly.GetManifestResourceNames();
+
+//// Mögliche Ressourcennamen durchsuchen
+//string[] possibleNames = {
+//                    $"ACADTools.Resources.{name}.png",
+//                    $"ACADTools.Resources.{name}",
+//                    $"ACADTools.{name}.png",
+//                    resourceNames.FirstOrDefault(r => r.Contains(name))
+//                };
+
+//foreach (var resourceName in possibleNames.Where(n => !string.IsNullOrEmpty(n)))
+//{
+//    using (var stream = assembly.GetManifestResourceStream(resourceName))
+//    {
+//        if (stream != null)
+//        {
+//            using (var fileStream = File.Create(filePath))
+//            {
+//                stream.CopyTo(fileStream);
+//            }
+//            _cachedPaths[name] = filePath;
+//            return filePath;
+//        }
+//    }
+//}

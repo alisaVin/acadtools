@@ -97,7 +97,13 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="README.txt" />
-    <None Include="Resources\kres_logo_32.png" />
+    <Resource Include="Resources\icons8-close-16.png" />
+    <Resource Include="Resources\icons8-information-16.png" />
+    <Resource Include="Resources\icons8-new-file-16.png" />
+    <Resource Include="Resources\icons8-close-32.png" />
+    <Resource Include="Resources\icons8-information-32.png" />
+    <Resource Include="Resources\icons8-new-file-32.png" />
+    <Resource Include="Resources\CD-Logo_freigestellt.png" />
     <None Include="Resources\close_32.bmp" />
     <None Include="Resources\close_16.bmp" />
     <None Include="Resources\info_32.bmp" />
@@ -105,7 +111,7 @@
     <None Include="Resources\generate_32.bmp" />
     <None Include="Resources\generate_16.bmp" />
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
