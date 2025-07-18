@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:ACADTools.Views"
              xmlns:vm="clr-namespace:ACADTools.ViewModels"
              mc:Ignorable="d"
-             Title="ACADTools"
+             Title="Flächenlisten generieren"
              WindowStartupLocation="CenterScreen">
 
     <!--Styles definieren (Recources (ResourceDictionary) File)-->
