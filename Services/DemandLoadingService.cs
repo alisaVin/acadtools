@@ -6,9 +6,9 @@ using System.Reflection;
 using System.Resources;
 using System.Windows;
 
-namespace ACADTools.Commands
+namespace ACADTools.Services
 {
-    public class DemandLoading
+    public class DemandLoadingService
     {
         public static void RegisterForAutoLoading()
         {

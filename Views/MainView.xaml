@@ -4,10 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ACADTools.Views"
-             xmlns:vm="clr-namespace:ACADTools.ViewModels"
-             mc:Ignorable="d"
+             xmlns:vm="clr-namespace:ACADTools.ViewModels" d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+        mc:Ignorable="d"
              Title="Flächenlisten generieren"
-             WindowStartupLocation="CenterScreen">
+             WindowStartupLocation="CenterScreen"
+             ResizeMode="NoResize" Height="680" Width="500">
 
     <!--Styles definieren (Recources (ResourceDictionary) File)-->
     <Window.Resources>
@@ -17,10 +18,6 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
-    <Window.DataContext>
-        <vm:MainViewModel />
-    </Window.DataContext>
 
     <Grid x:Name="LayoutRoot" Margin="10,15" MinWidth="450" MinHeight="600">
         <Grid.RowDefinitions>
@@ -64,10 +61,14 @@
         </Grid.ColumnDefinitions>
 
         <Label Grid.Row="0">Flächen:</Label>
-        <ComboBox Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+        <ComboBox Grid.Column="1" Grid.ColumnSpan="2" 
+                  ItemsSource="{Binding LayerNames}"
+                  SelectedItem="{Binding SelectedLayer, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}" />
 
         <Label Grid.Row="1">Flächeninformation:</Label>
-        <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" />
+        <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
+                  ItemsSource="{Binding LayerNames}"
+                  SelectedItem="{Binding SelectedLayerInfo, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"/>
         <CheckBox Grid.Row="1" Grid.Column="3" Margin="15,0,15,0" Content="gruppieren"/>
 
         <!--Schraffur-->
@@ -98,7 +99,7 @@
 
                 <Label>Layer:</Label>
                 <ComboBox Grid.Column="1" Grid.ColumnSpan="2"/>
-                <CheckBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="15,0,0,0" Content="gruppieren"/>
+                <CheckBox Grid.Column="3" Margin="15,0,0,0" Content="gruppieren"/>
 
                 <Label Grid.Row="1">Schraffurtyp:</Label>
                 <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" />
@@ -134,7 +135,7 @@
 
                 <Label>Layer:</Label>
                 <ComboBox Grid.Column="1" Grid.ColumnSpan="2"/>
-                <CheckBox Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="15,0,0,0" Content="Attribute"/>
+                <CheckBox Grid.Column="3" Margin="15,0,0,0" Content="Attribute"/>
 
                 <Label Grid.Row="1">Einfügepunkt: </Label>
                 <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
@@ -169,7 +170,7 @@
         </GroupBox>
 
         <!--Flächengröße-->
-        <GroupBox Header="Flächengröße" Margin="0" BorderBrush="LightGray"
+        <GroupBox Header="Flächengröße" BorderBrush="LightGray"
                   Grid.Row="12" Grid.RowSpan="4"
                   Grid.Column="0" Grid.ColumnSpan="4">
             <Grid>
@@ -197,12 +198,12 @@
                 <Label Grid.Row="2" Grid.Column="0">Ländereinstellung: </Label>
                 <ComboBox Grid.Row="2" Grid.Column="1"/>
                 <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"
-                          VerticalAlignment="Center" HorizontalAlignment="Center" Content="in der Zeichnung eintragen"/>
+                          HorizontalAlignment="Center" Content="in der Zeichnung eintragen"/>
             </Grid>
         </GroupBox>
 
         <!--Flächenlisten-->
-        <GroupBox Header="Flächenliste" Margin="0" BorderBrush="LightGray"
+        <GroupBox Header="Flächenliste" BorderBrush="LightGray"
                   Grid.Row="16" Grid.RowSpan="5"
                   Grid.Column="0" Grid.ColumnSpan="4">
             <Grid>
@@ -219,33 +220,35 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <CheckBox Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" 
+                <CheckBox Grid.ColumnSpan="2"
                           Content="Nummer" IsChecked="True"/>
                 <CheckBox Grid.Row="1" Grid.ColumnSpan="2" 
-                          VerticalAlignment="Center" HorizontalAlignment="Left" Content="Flächengröße" IsChecked="True"/>
-                <CheckBox Grid.Row="2" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Left" 
+                          Content="Flächengröße" IsChecked="True"/>
+                <CheckBox Grid.Row="2" Grid.ColumnSpan="2" 
                           Content="Erweiterter Text der Flächengröße"/>
-                <CheckBox Grid.Row="3" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Left" 
+                <CheckBox Grid.Row="3" Grid.ColumnSpan="2" 
                           Content="Dateinamen der Zeichnung" IsChecked="True"/>
-                <CheckBox Grid.Column="2" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Left" 
+                <CheckBox Grid.Column="2" Grid.ColumnSpan="2" 
                           Content="Referenz der Flächen" IsChecked="True"/>
-                <CheckBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Left" 
+                <CheckBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"
                           Content="Referenz der Schraffur" IsEnabled="{Binding ElementName=chkBlockGroup, Path=IsChecked}"/>
-                <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Left" 
+                <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"
                           Content="Referenz der Flächeninfürmation" />
-                <CheckBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Left" 
+                <CheckBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2"
                           Content="Kopfzeile" IsChecked="True"/>
             </Grid>
         </GroupBox>
 
         <!--Datei-->
         <Label Grid.Row="21">Dateiname: </Label>
-        <TextBox Grid.Row="21" Grid.Column="1" Grid.ColumnSpan="3" Margin="0,0,30,0" />
-        <Button Grid.Row="21" Grid.Column="3" Height="20" Width="20" HorizontalAlignment="Right" VerticalAlignment="Center" Content="..."/>
+        <TextBox Grid.Row="21" Grid.Column="1" Grid.ColumnSpan="3" Margin="-40,0,30,0" />
+        <Button Grid.Row="21" Grid.Column="3" Style="{StaticResource SelectDirectoryBtnStyle}"
+                Foreground ="DarkSlateGray" Background="White" Content="..." Click="SelectDirectoryBtn_Click"/>
 
-        <Button Grid.Row="22" Grid.Column="2" Grid.ColumnSpan="2" Height="25" Width="65" Margin="0,0,80,0"
-                Style="{StaticResource StartBtnStyle}"  Content="Start" />
-        <Button Grid.Row="22" Grid.Column="3" Height="25" Width="65"
-                HorizontalAlignment="Right" VerticalAlignment="Center" Content="Schließen" />
+        <Button Grid.Row="22" Grid.Column="2" Grid.ColumnSpan="2"
+                Style="{StaticResource StartBtnStyle}"  Content="Start" Command="{Binding GetBlocksFromSelectedLayerCommand}"
+                CommandParameter="{Binding SelectedLayer}"/>
+        <Button Grid.Row="22" Grid.Column="3"
+                Content="Zurücksetzen" />
     </Grid>
 </Window>

@@ -1,10 +1,11 @@
-﻿using Autodesk.AutoCAD.Customization;
+﻿using ACADTools.Services;
+using Autodesk.AutoCAD.Customization;
 using System;
 using app = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace ACADTools.Commands
 {
-    public class ACADCommandsRibbon
+    public class ACADCommandRibbon
     {
         private static string _tabName = "ACADTools_v2";
         private static string _panelName = "Tools panel";
@@ -172,8 +173,8 @@ namespace ACADTools.Commands
             //Buttons erstellen
             RibbonCommandButton generateBtn = new RibbonCommandButton(largeRow);
             generateBtn.Text = "Flächenlisten generieren";
-            string smallGenerateIcon = IconManager.GetIconPath("icons8-new-file-16");
-            string largeGenerateIcon = IconManager.GetIconPath("icons8-new-file-32");
+            string smallGenerateIcon = IconService.GetIconPath("icons8-new-file-16");
+            string largeGenerateIcon = IconService.GetIconPath("icons8-new-file-32");
 
             MenuMacro menuMac1 = macroGroup.CreateMenuMacro("generateBtn_macro", "^C^CGENERATEAREALISTS", "generateBtn_tag", "Bereitet die Blockdefinitionen zum CSV-Import vor",
                                                             MacroType.Any, smallGenerateIcon, largeGenerateIcon, "generateBtn_labelID");
@@ -186,8 +187,8 @@ namespace ACADTools.Commands
 
             RibbonCommandButton infoBtn = new RibbonCommandButton(firstRow);
             infoBtn.Text = "Info";
-            string smallInfoIcon = IconManager.GetIconPath("icons8-information-16");
-            string largeInfoIcon = IconManager.GetIconPath("icons8-information-32");
+            string smallInfoIcon = IconService.GetIconPath("icons8-information-16");
+            string largeInfoIcon = IconService.GetIconPath("icons8-information-32");
 
             MenuMacro menuMac2 = macroGroup.CreateMenuMacro("infoBtn_macro", "^C^CINFOACADTOOLS", "infoBtn_tag", "Informationen zur aktuellen Plug-In Version",
                                                             MacroType.Any, smallInfoIcon, largeInfoIcon, "infoBtn_labelID");
@@ -200,8 +201,8 @@ namespace ACADTools.Commands
 
             RibbonCommandButton closeBtn = new RibbonCommandButton(secondRow);
             closeBtn.Text = "ACADTools beenden";
-            string smallCloseIcon = IconManager.GetIconPath("icons8-close-16");
-            string largeCloseIcon = IconManager.GetIconPath("icons8-close-32");
+            string smallCloseIcon = IconService.GetIconPath("icons8-close-16");
+            string largeCloseIcon = IconService.GetIconPath("icons8-close-32");
 
             MenuMacro menuMacClose = macroGroup.CreateMenuMacro("closeBtn_macro", "^C^CCLOSEACADTOOLS", "closeBtn_tag", "Beendet die Anwendung vom ACADTools Plug-In",
                                                             MacroType.Any, smallCloseIcon, largeCloseIcon, "closeBtn_labelID");

@@ -2,14 +2,12 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style TargetType="{x:Type Window}">
-        <Setter Property="Background" Value="GhostWhite"/>
+        <Setter Property="Background" Value="White"/>
         <Setter Property="WindowStyle" Value="SingleBorderWindow"/>
         <Setter Property="SizeToContent" Value="WidthAndHeight"/>
-        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontFamily" Value="Roboto"/>
         <Setter Property="FontWeight" Value="Regular"/>
         <Setter Property="FontSize" Value="12"/>
-        <!--<Setter Property="MinHeight" Value="650"/>
-        <Setter Property="MinWidth" Value="450"/>-->
     </Style>
     
     <!--Base label-->
@@ -19,9 +17,10 @@
     </Style>
     
     <!--Right label-->
-    <Style x:Key="RightLabel" TargetType="Label">
+    <Style BasedOn="{StaticResource {x:Type Label}}" 
+           TargetType="Label"
+           x:Key="RightLabel">
         <Setter Property="HorizontalAlignment" Value="Right"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 
     <!--Textboxes-->
@@ -32,33 +31,55 @@
     
     <!--Comboboxes-->
     <Style TargetType="ComboBox">
-        <Setter Property="Height" Value="20"/>
+        <Setter Property="Height" Value="23"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="BorderBrush" Value="DarkSlateGray"/>
     </Style>
     
     <!--Checkboxes-->
-    <Style x:Key="GroupCheckbox" TargetType="CheckBox">
-        <Setter Property="VerticalAlignment" Value="Center" />
+    <Style TargetType="CheckBox">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="BorderBrush" Value="DarkSlateGray"/>
+    </Style>
+
+    <Style BasedOn="{StaticResource {x:Type CheckBox}}" 
+           x:Key="GroupCheckbox" 
+           TargetType="CheckBox">
         <Setter Property="FontWeight" Value="DemiBold" />
     </Style>
 
-    <Style TargetType="CheckBox">
-        <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="BorderBrush" Value="DarkSlateGray"/>
-    </Style>
-    
     <!--Start button-->
-    <Style x:Key="StartBtnStyle" TargetType="Button">
+    <Style TargetType="Button">
         <Setter Property="FontSize" Value="14"/>
-        <Setter Property="FontWeight" Value="DemiBold"/>
-        <Setter Property="Foreground" Value="Black" />
-        <Setter Property="BorderBrush" Value="DarkCyan" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="#3e75c8"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Width" Value="100"/>
         <Setter Property="HorizontalAlignment" Value="Right" />
         <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="Height" Value="25"/>
-        <Setter Property="Width" Value="65"/>
+        <Setter Property="Margin" Value="0,15,0,0"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#79abf7"/>
+                <Setter Property="Foreground" Value="DarkSlateGray" />
+            </Trigger>
+        </Style.Triggers>
+        
+    </Style>
+
+    <Style BasedOn="{StaticResource {x:Type Button}}"
+           x:Key="StartBtnStyle" 
+           TargetType="Button">
+        <Setter Property="FontWeight" Value="DemiBold"/>
+        <Setter Property="Margin" Value="0,15,110,0" />
+    </Style>
+
+    <Style x:Key="SelectDirectoryBtnStyle"
+           TargetType="Button">
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="Margin" Value="0,0,0,0"/>
+        <Setter Property="HorizontalAlignment" Value="Right" />
     </Style>
 </ResourceDictionary>

@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 
-namespace ACADTools.Commands
+namespace ACADTools.Services
 {
     /// <summary>
     /// Extrahiert Icons für Ribbon Buttons aus den Projekt Ressourcen
     /// </summary>
-    public static class IconManager
+    public static class IconService
     {
         private static readonly Dictionary<string, string> _cachedPaths = new Dictionary<string, string>();
         private static readonly string _tempDir = Path.Combine(Path.GetTempPath(), "ACADTools_Icons");
 
-        static IconManager()
+        static IconService()
         {
             if (!Directory.Exists(_tempDir))
                 Directory.CreateDirectory(_tempDir);

@@ -1,4 +1,4 @@
-﻿# :hammer_and_wrench: ACADTools: Plug-in für AutoCAD und ARES Commander, das Blockdefinitionsinformationen in das CSV-Format für den FAMOS-Import konvertiert
+﻿# :hammer_and_wrench: ACADTools: Plug-in für AutoCAD und ARES Commander
 
 
 ## :mag_right: Übersicht

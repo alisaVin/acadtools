@@ -1,17 +1,20 @@
-﻿using ACADTools.Views;
+﻿using ACADTools.Services;
+using ACADTools.Views;
 using Autodesk.AutoCAD.Runtime;
 using app = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace ACADTools.Commands
 {
-    public class ACADCommandsMethods
+    /// <summary>
+    /// Definition of AutoCAD CommandMethods
+    /// </summary>
+    public class ACADCommandMethods
     {
         #region Main command method
         [CommandMethod("ACADTOOLS")]
         public void ModelessWpfDialogCmd()
         {
-
-            ACADCommandsRibbon.CreateRegisterTab();
+            ACADCommandRibbon.CreateRegisterTab();
         }
         #endregion
 
@@ -20,7 +23,10 @@ namespace ACADTools.Commands
         public void GenerateAreaListsDialogCmd()
         {
             var mainDialog = new MainView();
-            var result = app.ShowModalWindow(mainDialog);
+            //Modeless dialog
+            app.ShowModelessWindow(mainDialog);
+            //Modal dialog
+            //var result = app.ShowWindow(mainDialog);
         }
         #endregion
 
@@ -28,8 +34,8 @@ namespace ACADTools.Commands
         [CommandMethod("CLOSEACADTOOLS")]
         public void CloseAcadTools()
         {
-            ACADCommandsRibbon.RemoveExistingTabs();
-            IconManager.Cleanup();
+            ACADCommandRibbon.RemoveExistingTabs();
+            IconService.Cleanup();
         }
         #endregion
 
@@ -47,13 +53,13 @@ namespace ACADTools.Commands
         [CommandMethod("REGACADTOOL")]
         public static void RegisterAppOnDemand()
         {
-            DemandLoading.RegisterForAutoLoading();
+            DemandLoadingService.RegisterForAutoLoading();
         }
 
         [CommandMethod("UNREGACADTOOL")]
         public static void UnregisterApp()
         {
-            DemandLoading.UnregisterForAutoLoading();
+            DemandLoadingService.UnregisterForAutoLoading();
         }
         #endregion
 
