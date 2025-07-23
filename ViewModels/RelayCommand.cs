@@ -8,15 +8,24 @@ namespace ACADTools.ViewModels
     /// </summary>
     public class RelayCommand : ICommand
     {
-        readonly Action<object> execute;
+        readonly Action<object> execute; //function call
         readonly Func<object, bool> canExecute;
+
+        /// <summary>
+        /// Event indicating that the returned value of the predicte changed.
+        /// </summary>
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
 
         /// <summary>
         /// Creates a new instance of RelayCommand.
         /// </summary>
         /// <param name="execute">Action to execute.</param>
         /// <param name="canExecute">Predicate indicating if the action can be executed.</param>
-        public RelayCommand(Action<object> execute, Func<object, bool> canExecute)
+        public RelayCommand(Action<object> execute, Func<object, bool> canExecute = null)
         {
             this.execute = execute;
             this.canExecute = canExecute;
@@ -33,15 +42,8 @@ namespace ACADTools.ViewModels
         /// Executes the action passed as parameter to the constructor.
         /// </summary>
         /// <param name="parameter">Action parameter (may be null).</param>
-        public bool CanExecute(object parameter) => canExecute(parameter);
+        public bool CanExecute(object parameter) => canExecute == null || canExecute(parameter);
 
-        /// <summary>
-        /// Event indicating that the returned value of the predicte changed.
-        /// </summary>
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
+
     }
 }

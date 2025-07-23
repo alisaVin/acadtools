@@ -2,6 +2,9 @@
 {
     public class RaumstempelEntity
     {
+        public string Id { get; set; }
+        public string Handle { get; set; }
+        public string BlockDefinitionName { get; set; }
         public int RoomNumber { get; set; }
         public string RoomName { get; set; }
         public string RoomDescription { get; set; }

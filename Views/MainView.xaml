@@ -1,14 +1,15 @@
 ﻿<Window x:Class="ACADTools.Views.MainView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ACADTools.Views"
-             xmlns:vm="clr-namespace:ACADTools.ViewModels" d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:local="clr-namespace:ACADTools.Views"
+        xmlns:vm="clr-namespace:ACADTools.ViewModels" d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         mc:Ignorable="d"
-             Title="Flächenlisten generieren"
-             WindowStartupLocation="CenterScreen"
-             ResizeMode="NoResize" Height="680" Width="500">
+        Title="Flächenlisten generieren"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize" Height="680" Width="500">
 
     <!--Styles definieren (Recources (ResourceDictionary) File)-->
     <Window.Resources>
@@ -61,7 +62,7 @@
         </Grid.ColumnDefinitions>
 
         <Label Grid.Row="0">Flächen:</Label>
-        <ComboBox Grid.Column="1" Grid.ColumnSpan="2" 
+        <ComboBox Grid.Column="1" Grid.ColumnSpan="2"
                   ItemsSource="{Binding LayerNames}"
                   SelectedItem="{Binding SelectedLayer, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}" />
 
@@ -246,9 +247,8 @@
                 Foreground ="DarkSlateGray" Background="White" Content="..." Click="SelectDirectoryBtn_Click"/>
 
         <Button Grid.Row="22" Grid.Column="2" Grid.ColumnSpan="2"
-                Style="{StaticResource StartBtnStyle}"  Content="Start" Command="{Binding GetBlocksFromSelectedLayerCommand}"
-                CommandParameter="{Binding SelectedLayer}"/>
+                Style="{StaticResource StartBtnStyle}" Content="Start" Command="{Binding GetObjtectsBySelectedLayersCommand}"/>
         <Button Grid.Row="22" Grid.Column="3"
-                Content="Zurücksetzen" />
+                Content="Zurücksetzen" Click="ResetControlsButton_Click"/>
     </Grid>
 </Window>

@@ -1,6 +1,6 @@
 ﻿namespace ACADTools.Models
 {
-    public class BlockDefinitionEntity
+    public class RaumpolygonEntity
     {
         public string Id { get; set; }
         public string Handle { get; set; }

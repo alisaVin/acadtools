@@ -2,6 +2,8 @@
 using ACADTools.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 
 
 namespace ACADTools.ViewModels
@@ -12,15 +14,24 @@ namespace ACADTools.ViewModels
 
         //Properties
         public List<string> LayerNames { get; set; }
-        public ObservableCollection<BlockDefinitionEntity> Blocks { get; set; }
+        public ObservableCollection<RaumpolygonEntity> Polygons { get; set; }
         public ObservableCollection<RaumstempelEntity> Raumstempeln { get; set; }
 
         /// <summary>
-        /// Gets the Command object bound to the OK button.
+        /// Gets the Command object bound to the Start button.
         /// The button automatically disabled if CanExecute predicate returns false.
         /// </summary>
-        public RelayCommand GetBlocksFromSelectedLayerCommand { get; }
+        //public RelayCommand GetBlocksFromSelectedLayerCommand => new RelayCommand(execute => LoadPolygonesFromSelectedLayer());
 
+        public RelayCommand GetObjtectsBySelectedLayersCommand => new RelayCommand(
+            execute => ProcessBothLayers(),
+            canExecute => !string.IsNullOrEmpty(SelectedLayer) && !string.IsNullOrEmpty(SelectedLayerInfo));
+
+        private void ProcessBothLayers()
+        {
+            LoadPolygonesFromSelectedLayer();
+            LoadBlocksFromSelectedLayer();
+        }
 
         //Selected layer item
         private string _selectedLayer;
@@ -50,27 +61,42 @@ namespace ACADTools.ViewModels
         public MainViewModel()
         {
             _acadApplication = new ACADApplication();
-            LayerNames = _acadApplication.GetLayerNamesFromCAD();
-            Blocks = new ObservableCollection<BlockDefinitionEntity>();
+            LayerNames = _acadApplication.GetLayerNamesFromCAD()
+                                         .OrderBy(x => x).ToList(); //sorted alphabeticaly
+            Polygons = new ObservableCollection<RaumpolygonEntity>();
             Raumstempeln = new ObservableCollection<RaumstempelEntity>();
-
-            //Crete the command once
-            GetBlocksFromSelectedLayerCommand = new RelayCommand(o => LoadBlocksFromSelectedLayer(), o => true);
         }
 
-
-        public void LoadBlocksFromSelectedLayer()
+        //for room polygones
+        public void LoadPolygonesFromSelectedLayer()
         {
             if (!string.IsNullOrEmpty(SelectedLayer))
             {
-                var blocks = _acadApplication.GetBlocksFromLayer(SelectedLayer);
-                Blocks.Clear();
+                var polygones = _acadApplication.GetPolygonesFromLayer(SelectedLayer); //Flächen combobox
+                Polygons.Clear();
+
+                foreach (var polygone in polygones)
+                {
+                    Polygons.Add(polygone);
+                }
+            }
+            MessageBox.Show($"You have {Polygons.Count} polygones to import");
+        }
+
+        //for room info blocks
+        public void LoadBlocksFromSelectedLayer()
+        {
+            if (!string.IsNullOrEmpty(SelectedLayerInfo))
+            {
+                var blocks = _acadApplication.GetBlocksFromLayer(SelectedLayerInfo); //Flächen combobox
+                Raumstempeln.Clear();
 
                 foreach (var block in blocks)
                 {
-                    Blocks.Add(block);
+                    Raumstempeln.Add(block);
                 }
             }
+            MessageBox.Show($"You have {Raumstempeln.Count} blocks to import");
         }
 
         //public BlockItem BlockReftoBlockItem(BlockReference blockRef)
