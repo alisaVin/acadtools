@@ -64,27 +64,27 @@
         <Label Grid.Row="0">Flächen:</Label>
         <ComboBox Grid.Column="1" Grid.ColumnSpan="2"
                   ItemsSource="{Binding LayerNames}"
-                  SelectedItem="{Binding SelectedLayer, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}" />
+                  SelectedItem="{Binding SelectedLayer, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
         <Label Grid.Row="1">Flächeninformation:</Label>
         <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
                   ItemsSource="{Binding LayerNames}"
-                  SelectedItem="{Binding SelectedLayerInfo, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"/>
-        <CheckBox Grid.Row="1" Grid.Column="3" Margin="15,0,15,0" Content="gruppieren"/>
+                  SelectedItem="{Binding SelectedLayerInfo, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+        <CheckBox Grid.Row="1" Grid.Column="3" Margin="15,0,15,0" 
+                  Content="gruppieren" />
 
         <!--Schraffur-->
         <!--IsEnabled="{Binding ElementName=chkHatchingGroup, Path=IsChecked}" -->
         <GroupBox BorderBrush="LightGray"
                   Grid.Row="2" Grid.RowSpan="4"
                   Grid.Column="0" Grid.ColumnSpan="4">
-            
-            <GroupBox.HeaderTemplate>
-                <DataTemplate>
-                    <CheckBox x:Name="chkHatchingGroup" Grid.Row="2" Grid.Column="0" 
-                              Style="{StaticResource GroupCheckbox}" Content="Schraffur"
-                              Checked="chkHatchingGroup_Checked" Unchecked="chkHatchingGroup_Checked"/>
-                </DataTemplate>
-            </GroupBox.HeaderTemplate>
+
+            <GroupBox.Header>
+                <CheckBox x:Name="chkHatchingGroup" Grid.Row="2" Grid.Column="0" 
+                  Style="{StaticResource GroupCheckbox}" Content="Schraffur"
+                  IsChecked="{Binding CheckedHatching, Mode=TwoWay}"
+                  Click="chkHatchingGroup_Checked"/>
+            </GroupBox.Header>
             <Grid x:Name="uiHatchingGroup" IsEnabled="False">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -120,7 +120,8 @@
             <GroupBox.Header>
                 <CheckBox x:Name="chkBlockGroup" Grid.Row="6" Grid.Column="0" 
                           Style="{StaticResource GroupCheckbox}" Content="Block"
-                          Checked="chkBlockGroup_Checked" Unchecked="chkBlockGroup_Checked"/>
+                          IsChecked="{Binding CheckedBlock, Mode=TwoWay}"
+                          Click="chkBlockGroup_Checked"/>
             </GroupBox.Header>
             <Grid x:Name="uiBlockGroup" IsEnabled="False">
                 <Grid.RowDefinitions>
@@ -249,6 +250,6 @@
         <Button Grid.Row="22" Grid.Column="2" Grid.ColumnSpan="2"
                 Style="{StaticResource StartBtnStyle}" Content="Start" Command="{Binding GetObjtectsBySelectedLayersCommand}"/>
         <Button Grid.Row="22" Grid.Column="3"
-                Content="Zurücksetzen" Click="ResetControlsButton_Click"/>
+                Content="Zurücksetzen" Command="{Binding ResetPropertiesCommand}"/>
     </Grid>
 </Window>

@@ -2,8 +2,6 @@
 using Microsoft.Win32;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace ACADTools.Views
 {
@@ -15,8 +13,7 @@ namespace ACADTools.Views
         public MainView()
         {
             InitializeComponent();
-            MainViewModel vm = new MainViewModel();
-            DataContext = vm;
+            DataContext = new MainViewModel();
         }
 
         //CheckBoxes Action
@@ -52,39 +49,6 @@ namespace ACADTools.Views
             {
                 FileStream fs = saveFileDialog.OpenFile() as FileStream;
                 fs.Close();
-            }
-        }
-
-        private void ResetControlsButton_Click(object sender, RoutedEventArgs e)
-        {
-            ResetControlsInputs(this);
-        }
-
-        private void ResetControlsInputs(DependencyObject parent)
-        {
-            int childCount = VisualTreeHelper.GetChildrenCount(parent);
-
-            for (int i = 0; i < childCount; i++)
-            {
-                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
-
-                switch (child)
-                {
-                    case TextBox textBox:
-                        textBox.Text = string.Empty;
-                        break;
-
-                    case ComboBox comboBox:
-                        comboBox.SelectedIndex = -1;
-                        comboBox.SelectedItem = null;
-                        break;
-
-                    case CheckBox checkBox:
-                        checkBox.IsChecked = false;
-                        break;
-                }
-
-                ResetControlsInputs(child);
             }
         }
     }
