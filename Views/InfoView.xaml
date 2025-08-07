@@ -7,10 +7,11 @@
         mc:Ignorable="d"
         Title="Information"
         FontFamily="Segoe UI"
-        MinWidth="350" MinHeight="150"
-        SizeToContent="WidthAndHeight">
+        Width="450" Height="250"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
 
-    <Grid Margin="10,15" MinWidth="350" MinHeight="150">
+    <Grid x:Name ="InfoLayout" Margin="10,15" Width="350" Height="180">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

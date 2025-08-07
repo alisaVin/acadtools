@@ -13,14 +13,11 @@ namespace ACADTools.Services
         private static readonly Dictionary<string, string> _cachedPaths = new Dictionary<string, string>();
         private static readonly string _tempDir = Path.Combine(Path.GetTempPath(), "ACADTools_Icons");
 
-        static IconService()
+        public static string GetIconPath(string name)
         {
             if (!Directory.Exists(_tempDir))
                 Directory.CreateDirectory(_tempDir);
-        }
 
-        public static string GetIconPath(string name)
-        {
             // Cache prüfen
             if (_cachedPaths.ContainsKey(name))
                 return _cachedPaths[name];
@@ -60,7 +57,7 @@ namespace ACADTools.Services
         }
 
         /// <summary>
-        /// Aufräumen der temporären Dateien beim Shutdown
+        /// Aufräumen der temporären Dateien beim Shutdown !!!! Mal testen (vielleicht wird nicht benötigt)
         /// </summary>
         public static void Cleanup()
         {

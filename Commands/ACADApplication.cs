@@ -65,21 +65,6 @@ namespace ACADTools.Commands
 
         private ObjectIdCollection SelectAllPolygones(string layerName)
         {
-            // Build a filter list so that only entities
-            // on the specified layer are selected
-            //TypedValue[] tvs = new TypedValue[1]
-            //{
-            //    new TypedValue((int)DxfCode.LayerName, layerName)
-            //};
-
-            //SelectionFilter sf = new SelectionFilter(tvs);
-            //PromptSelectionResult psr = ed.SelectAll(sf);
-
-            //if (psr.Status == PromptStatus.OK)
-            //    return new ObjectIdCollection(psr.Value.GetObjectIds());
-            //else
-            //    return new ObjectIdCollection();
-
             ObjectIdCollection selObjects = null;
 
             try
@@ -170,3 +155,19 @@ namespace ACADTools.Commands
 //                             };
 //                         })
 //                         .ToList();
+
+
+// Build a filter list so that only entities
+// on the specified layer are selected
+//TypedValue[] tvs = new TypedValue[1]
+//{
+//    new TypedValue((int)DxfCode.LayerName, layerName)
+//};
+
+//SelectionFilter sf = new SelectionFilter(tvs);
+//PromptSelectionResult psr = ed.SelectAll(sf);
+
+//if (psr.Status == PromptStatus.OK)
+//    return new ObjectIdCollection(psr.Value.GetObjectIds());
+//else
+//    return new ObjectIdCollection();

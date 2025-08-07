@@ -5,11 +5,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:local="clr-namespace:ACADTools.Views"
-        xmlns:vm="clr-namespace:ACADTools.ViewModels" d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+        xmlns:vm="clr-namespace:ACADTools.ViewModels"
         mc:Ignorable="d"
         Title="Flächenlisten generieren"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize" Height="680" Width="500">
+        ResizeMode="NoResize" Height="720" Width="500">
 
     <!--Styles definieren (Recources (ResourceDictionary) File)-->
     <Window.Resources>
@@ -20,10 +20,10 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid x:Name="LayoutRoot" Margin="10,15" MinWidth="450" MinHeight="600">
+    <Grid x:Name="LayoutRoot" Margin="10,15" MinWidth="450" MinHeight="700">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" /> <!--Flächeninformation-Feld für Raumstempel könnte später für Block und Text GroupBox Einstellungen benutzt sein-->
             <!--Schraffur-->
             <RowDefinition Height="Auto" /> <!--Checkbox-->
             <RowDefinition Height="Auto" />
@@ -32,6 +32,9 @@
             <!--Block-->
             <!--Checkbox-->
             <RowDefinition Height="Auto" /> 
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <!--Text-->
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <!--Nummergenerierung-->
@@ -82,10 +85,10 @@
             <GroupBox.Header>
                 <CheckBox x:Name="chkHatchingGroup" Grid.Row="2" Grid.Column="0" 
                   Style="{StaticResource GroupCheckbox}" Content="Schraffur"
-                  IsChecked="{Binding CheckedHatching, Mode=TwoWay}"
-                  Click="chkHatchingGroup_Checked"/>
+                  IsChecked="{Binding CheckedHatching, Mode=TwoWay}"/>
+                <!--Click="chkHatchingGroup_Checked"-->
             </GroupBox.Header>
-            <Grid x:Name="uiHatchingGroup" IsEnabled="False">
+            <Grid x:Name="uiHatchingGroup" IsEnabled="{Binding ElementName=chkHatchingGroup, Path=IsChecked}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -120,10 +123,9 @@
             <GroupBox.Header>
                 <CheckBox x:Name="chkBlockGroup" Grid.Row="6" Grid.Column="0" 
                           Style="{StaticResource GroupCheckbox}" Content="Block"
-                          IsChecked="{Binding CheckedBlock, Mode=TwoWay}"
-                          Click="chkBlockGroup_Checked"/>
+                          IsChecked="{Binding CheckedBlock, Mode=TwoWay}"/>
             </GroupBox.Header>
-            <Grid x:Name="uiBlockGroup" IsEnabled="False">
+            <Grid x:Name="uiBlockGroup" IsEnabled="{Binding ElementName=chkBlockGroup, Path=IsChecked}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -136,17 +138,42 @@
                 </Grid.ColumnDefinitions>
 
                 <Label>Layer:</Label>
-                <ComboBox Grid.Column="1" Grid.ColumnSpan="2"/>
-                <CheckBox Grid.Column="3" Margin="15,0,0,0" Content="Attribute"/>
+                <ComboBox Grid.Column="1" Grid.ColumnSpan="2" />
+                <CheckBox Grid.Column="3" Margin="15,0,0,0" Content="Attribute"
+                          IsChecked="{Binding CheckedBlockAttributes, Mode=TwoWay}"/>
 
                 <Label Grid.Row="1">Einfügepunkt: </Label>
                 <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
             </Grid>
         </GroupBox>
-
+        <!--Text-->
+        <GroupBox BorderBrush="LightGray"
+                  Grid.Row="9" Grid.RowSpan="2"
+                  Grid.Column="0" Grid.ColumnSpan="4">
+            <GroupBox.Header>
+                <CheckBox x:Name="chkTextGroup" Grid.Row="9" Grid.Column="0" 
+                          Style="{StaticResource GroupCheckbox}" Content="Text"
+                          IsChecked="{Binding CheckedText, Mode=TwoWay}"/>
+            </GroupBox.Header>
+            <Grid x:Name="uiTextGroup" IsEnabled="{Binding ElementName=chkTextGroup, Path=IsChecked}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label>Layer:</Label>
+                <ComboBox Grid.Column="1" Grid.ColumnSpan="2" />
+            </Grid>
+            
+        </GroupBox>
+        
         <!--Nummergenerierung-->
         <GroupBox Header="Nummergenerierung" Margin="0" BorderBrush="LightGray"
-                  Grid.Row="9" Grid.RowSpan="3"
+                  Grid.Row="11" Grid.RowSpan="3"
                   Grid.Column="0" Grid.ColumnSpan="4">
             <Grid>
                 <Grid.RowDefinitions>
@@ -161,19 +188,19 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Column="0">Vorangestellter Text: </Label>
-                <TextBox Grid.Column="1"/>
-
+                <TextBox Grid.Column="1" Text="{Binding RoomNumberPrefixedText}"/>
+                         
                 <Label Grid.Column="2">Nachgestellter Text: </Label>
-                <TextBox Grid.Column="3"/>
+                <TextBox Grid.Column="3" Text="{Binding RoomNumberSubstitutedText}"/>
 
                 <Label Grid.Row="1" Grid.Column="0">Startwert: </Label>
-                <TextBox Grid.Row="1" Grid.Column="1"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding StartRoomNumber}"/>
             </Grid>
         </GroupBox>
 
         <!--Flächengröße-->
         <GroupBox Header="Flächengröße" BorderBrush="LightGray"
-                  Grid.Row="12" Grid.RowSpan="4"
+                  Grid.Row="14" Grid.RowSpan="4"
                   Grid.Column="0" Grid.ColumnSpan="4">
             <Grid>
                 <Grid.RowDefinitions>
@@ -189,16 +216,18 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Column="0">Vorangestellter Text: </Label>
-                <TextBox Grid.Column="1"/>
+                <TextBox Grid.Column="1" Text="{Binding AreaPrefixedText}"/>
                 <Label Grid.Column="2">Nachgestellter Text: </Label>
-                <TextBox Grid.Column="3"/>
+                <TextBox Grid.Column="3" Text="{Binding AreaSubstitutedText}"/>
 
                 <Label Grid.Row="1" Grid.Column="0">Flächen-Faktor: </Label>
-                <TextBox Grid.Row="1" Grid.Column="1"/>
-                <Label Grid.Row="1" Grid.Column="2">Dezimalstellen: </Label>
-                <TextBox Grid.Row="1" Grid.Column="3"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AreaFactor}"/>
+                <Label Grid.Row="1" Grid.Column="2">Nachkommastellen: </Label>
+                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding AreaDecimalPlaces}"/>
                 <Label Grid.Row="2" Grid.Column="0">Ländereinstellung: </Label>
-                <ComboBox Grid.Row="2" Grid.Column="1"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" 
+                          ItemsSource="{Binding AreaCultures}"
+                          SelectedItem="{Binding AreaSelectedCulture}"/>
                 <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"
                           HorizontalAlignment="Center" Content="in der Zeichnung eintragen"/>
             </Grid>
@@ -206,7 +235,7 @@
 
         <!--Flächenlisten-->
         <GroupBox Header="Flächenliste" BorderBrush="LightGray"
-                  Grid.Row="16" Grid.RowSpan="5"
+                  Grid.Row="18" Grid.RowSpan="5"
                   Grid.Column="0" Grid.ColumnSpan="4">
             <Grid>
                 <Grid.RowDefinitions>
@@ -223,33 +252,40 @@
                 </Grid.ColumnDefinitions>
 
                 <CheckBox Grid.ColumnSpan="2"
-                          Content="Nummer" IsChecked="True"/>
+                          Content="Nummer" IsChecked="{Binding RoomNumberCsv, Mode=TwoWay}"/>
                 <CheckBox Grid.Row="1" Grid.ColumnSpan="2" 
-                          Content="Flächengröße" IsChecked="True"/>
+                          Content="Flächengröße" IsChecked="{Binding AreaSizeCsv, Mode=TwoWay}"/>
                 <CheckBox Grid.Row="2" Grid.ColumnSpan="2" 
-                          Content="Erweiterter Text der Flächengröße"/>
+                          Content="Erweiterter Text der Flächengröße" IsChecked="{Binding AreaSizeExplandedCsv, Mode=TwoWay}"/>
                 <CheckBox Grid.Row="3" Grid.ColumnSpan="2" 
-                          Content="Dateinamen der Zeichnung" IsChecked="True"/>
+                          Content="Dateinamen der Zeichnung" IsChecked="{Binding DrawingNameCsv, Mode=TwoWay}"/>
                 <CheckBox Grid.Column="2" Grid.ColumnSpan="2" 
-                          Content="Referenz der Flächen" IsChecked="True"/>
+                          Content="Referenz der Flächen" IsChecked="{Binding AreaReferenceCsv, Mode=TwoWay}"/>
                 <CheckBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"
-                          Content="Referenz der Schraffur" IsEnabled="{Binding ElementName=chkBlockGroup, Path=IsChecked}"/>
+                          Content="Referenz der Schraffur" IsEnabled="{Binding ElementName=chkHatchingGroup, Path=IsChecked}"
+                          IsChecked="{Binding HatchingReferenceCsv,  Mode=TwoWay}"/>
                 <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"
-                          Content="Referenz der Flächeninfürmation" />
+                          Content="Referenz der Flächeninfürmation" IsChecked="{Binding AreaInfoReferenceCsv, Mode=TwoWay}"/>
                 <CheckBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2"
-                          Content="Kopfzeile" IsChecked="True"/>
+                          Content="Kopfzeile" IsChecked="{Binding HeaderCsv}"/>
             </Grid>
         </GroupBox>
 
         <!--Datei-->
-        <Label Grid.Row="21">Dateiname: </Label>
-        <TextBox Grid.Row="21" Grid.Column="1" Grid.ColumnSpan="3" Margin="-40,0,30,0" />
-        <Button Grid.Row="21" Grid.Column="3" Style="{StaticResource SelectDirectoryBtnStyle}"
+        <Label Grid.Row="23">Dateiname: </Label>
+        <TextBox Grid.Row="23" Grid.Column="1" Grid.ColumnSpan="3" Margin="-40,0,30,0" />
+        <Button Grid.Row="23" Grid.Column="3" Style="{StaticResource SelectDirectoryBtnStyle}"
                 Foreground ="DarkSlateGray" Background="White" Content="..." Click="SelectDirectoryBtn_Click"/>
 
-        <Button Grid.Row="22" Grid.Column="2" Grid.ColumnSpan="2"
+        <Label Grid.Row="24" Grid.Column="0">Anzahl der Raumflächen: </Label>
+        <Label Grid.Row="24" Grid.Column="1">
+            <Label.Content>
+                <Binding Path="Polygons.Count" Mode="OneWay"/>
+            </Label.Content>
+        </Label>
+        <Button Grid.Row="24" Grid.Column="2" Grid.ColumnSpan="2"
                 Style="{StaticResource StartBtnStyle}" Content="Start" Command="{Binding GetObjtectsBySelectedLayersCommand}"/>
-        <Button Grid.Row="22" Grid.Column="3"
+        <Button Grid.Row="24" Grid.Column="3"
                 Content="Zurücksetzen" Command="{Binding ResetPropertiesCommand}"/>
     </Grid>
 </Window>

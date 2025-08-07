@@ -1,52 +1,15 @@
 ﻿using ACADTools.Commands;
 using ACADTools.Models;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 
 
 namespace ACADTools.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : DefaultViewModel
     {
         private readonly ACADApplication _acadApplication;
-
-        //Properties
-        public ObservableCollection<RaumpolygonEntity> Polygons { get; set; }
-        public ObservableCollection<RaumstempelEntity> Raumstempeln { get; set; }
-        public List<string> LayerNames { get; set; }
-
-        //Selected layer item
-        private string _selectedLayer;
-        public string SelectedLayer
-        {
-            get => _selectedLayer;
-            set { _selectedLayer = value; OnPropertyChanged(nameof(SelectedLayer)); }
-        }
-
-        //Selected layer info
-        private string _selectedLayerInfo;
-        public string SelectedLayerInfo
-        {
-            get => _selectedLayerInfo;
-            set { _selectedLayerInfo = value; OnPropertyChanged(nameof(SelectedLayerInfo)); }
-        }
-
-        //for check boxes binding
-        private bool _checkedHatching;
-        public bool CheckedHatching
-        {
-            get => _checkedHatching;
-            set { _checkedHatching = value; OnPropertyChanged(nameof(CheckedHatching)); }
-        }
-
-        private bool _checkedBlock;
-        public bool CheckedBlock
-        {
-            get => _checkedBlock;
-            set { _checkedBlock = value; OnPropertyChanged(nameof(CheckedBlock)); }
-        }
+        private readonly DefaultViewModel _defaultViewModel;
 
         /// <summary>
         /// Gets the Command object bound to the Start button.
@@ -59,7 +22,7 @@ namespace ACADTools.ViewModels
 
         public RelayCommand ResetPropertiesCommand => new RelayCommand(
             execute => ResetProperies(),
-            canExecute => !string.IsNullOrEmpty(SelectedLayer) && !string.IsNullOrEmpty(SelectedLayerInfo) && CheckedBlock == true && CheckedHatching == true);
+            canExecute => !string.IsNullOrEmpty(SelectedLayer) && !string.IsNullOrEmpty(SelectedLayerInfo)); //&& CheckedBlock == true && CheckedHatching == true
 
         private void ProcessBothLayers()
         {
@@ -70,6 +33,7 @@ namespace ACADTools.ViewModels
         public MainViewModel()
         {
             _acadApplication = new ACADApplication();
+            _defaultViewModel = new DefaultViewModel();
             LayerNames = _acadApplication.GetLayerNamesFromCAD()
                                          .OrderBy(x => x).ToList(); //sorted alphabeticaly
             Polygons = new ObservableCollection<RaumpolygonEntity>();
@@ -89,7 +53,7 @@ namespace ACADTools.ViewModels
                     Polygons.Add(polygone);
                 }
             }
-            MessageBox.Show($"You have {Polygons.Count} polygones to import");
+            StartRoomNumber = Polygons.Count + 1;
         }
 
         //for room info blocks
@@ -105,17 +69,28 @@ namespace ACADTools.ViewModels
                     Raumstempeln.Add(block);
                 }
             }
-            MessageBox.Show($"You have {Raumstempeln.Count} blocks to import");
+            //MessageBox.Show($"You have {Raumstempeln.Count} blocks to import");
         }
 
         public void ResetProperies()
         {
             //try to make this later https://www.codeproject.com/Articles/158591/Resetting-a-View-Model-in-WPF-MVVM-applications-wi
 
-            SelectedLayer = null;
-            SelectedLayerInfo = null;
-            CheckedHatching = false;
-            CheckedBlock = false;
+            CopyPropertiesFrom(_defaultViewModel);
+
+        }
+
+        // Hilfsmethode für viele Properties ANSCHAUEN
+        private void CopyPropertiesFrom(DefaultViewModel source)
+        {
+            var properties = typeof(DefaultViewModel).GetProperties()
+                .Where(p => p.CanRead && p.CanWrite);
+
+            foreach (var prop in properties)
+            {
+                var value = prop.GetValue(source);
+                prop.SetValue(this, value);
+            }
         }
 
         //public BlockItem BlockReftoBlockItem(BlockReference blockRef)

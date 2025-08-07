@@ -17,23 +17,23 @@ namespace ACADTools.Views
         }
 
         //CheckBoxes Action
-        private void chkHatchingGroup_Checked(object sender, RoutedEventArgs e)
-        {
-            bool isEnabled = uiHatchingGroup.IsEnabled;
-            if (isEnabled == false)
-                uiHatchingGroup.IsEnabled = true;
-            else
-                uiHatchingGroup.IsEnabled = false;
-        }
+        //private void chkHatchingGroup_Checked(object sender, RoutedEventArgs e)
+        //{
+        //    bool isEnabled = uiHatchingGroup.IsEnabled;
+        //    if (isEnabled == false)
+        //        uiHatchingGroup.IsEnabled = true;
+        //    else
+        //        uiHatchingGroup.IsEnabled = false;
+        //}
 
-        private void chkBlockGroup_Checked(object sender, RoutedEventArgs e)
-        {
-            bool isEnabled = uiBlockGroup.IsEnabled;
-            if (isEnabled == false)
-                uiBlockGroup.IsEnabled = true;
-            else
-                uiBlockGroup.IsEnabled = false;
-        }
+        //private void chkBlockGroup_Checked(object sender, RoutedEventArgs e)
+        //{
+        //    bool isEnabled = uiBlockGroup.IsEnabled;
+        //    if (isEnabled == false)
+        //        uiBlockGroup.IsEnabled = true;
+        //    else
+        //        uiBlockGroup.IsEnabled = false;
+        //}
 
         //Save the csv file in the chosen directory
         private void SelectDirectoryBtn_Click(object sender, RoutedEventArgs e)

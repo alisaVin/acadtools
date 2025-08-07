@@ -11,6 +11,7 @@ namespace ACADTools.Commands
         private static string _panelName = "Tools panel";
         private static CustomizationSection _cs;
         private static string _currentWorkspace;
+        //private static IconService _iconService;
 
         /// <summary>
         /// Initialisiert die gemeinsamen Parameter

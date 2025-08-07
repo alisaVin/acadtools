@@ -10,8 +10,6 @@ namespace ACADTools.Views
         public InfoView()
         {
             InitializeComponent();
-
-
         }
     }
 }

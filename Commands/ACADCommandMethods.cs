@@ -50,13 +50,13 @@ namespace ACADTools.Commands
 
 
         #region Commands to register this plugin
-        [CommandMethod("REGACADTOOL")]
+        [CommandMethod("REGACADTOOLS")]
         public static void RegisterAppOnDemand()
         {
             DemandLoadingService.RegisterForAutoLoading();
         }
 
-        [CommandMethod("UNREGACADTOOL")]
+        [CommandMethod("UNREGACADTOOLS")]
         public static void UnregisterApp()
         {
             DemandLoadingService.UnregisterForAutoLoading();
