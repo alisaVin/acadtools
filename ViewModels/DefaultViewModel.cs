@@ -20,7 +20,7 @@ namespace ACADTools.ViewModels
             AreaPrefixedText = string.Empty;
             AreaSubstitutedText = string.Empty;
             AreaFactor = 1;
-            AreaDecimalPlaces = 2;
+            DecimalPlaces = 2;
             AreaSelectedCulture = string.Empty;
             RoomNumberCsv = true;
             AreaSizeCsv = true;
@@ -30,6 +30,7 @@ namespace ACADTools.ViewModels
             HatchingReferenceCsv = false;
             AreaInfoReferenceCsv = false;
             HeaderCsv = true;
+            //SelectedFilePathCsv = string.Empty; //mal schauen und besser implementieren
         }
 
         #region Collections
@@ -131,12 +132,12 @@ namespace ACADTools.ViewModels
             set { _areaFactor = value; OnPropertyChanged(); }
         }
 
-        private int _areaDecimalPlaces;
+        private int _decimalPlaces;
 
-        public int AreaDecimalPlaces
+        public int DecimalPlaces
         {
-            get { return _areaDecimalPlaces; }
-            set { _areaDecimalPlaces = value; OnPropertyChanged(); }
+            get { return _decimalPlaces; }
+            set { _decimalPlaces = value; OnPropertyChanged(); }
         }
 
         private string _areaSelectedCulture;
@@ -203,7 +204,21 @@ namespace ACADTools.ViewModels
             get { return _headerCsv; }
             set { _headerCsv = value; OnPropertyChanged(); }
         }
-        #endregion
 
+        private string _selectedFilePathCsv;
+        public string SelectedFilePathCsv
+        {
+            get { return _selectedFilePathCsv; }
+            set { _selectedFilePathCsv = value; OnPropertyChanged(); }
+        }
+
+        private string _currentDwgName;
+
+        public string CurrentDwgName
+        {
+            get { return _currentDwgName; }
+            set { _currentDwgName = value; OnPropertyChanged(); }
+        }
+        #endregion
     }
 }

@@ -4,6 +4,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using app = Autodesk.AutoCAD.ApplicationServices.Application;
 
@@ -23,6 +24,24 @@ namespace ACADTools.Commands
             ed = doc.Editor;
         }
 
+        //später als service bereitstellen ???
+        public string GetFullPathOfCurrentDwg()
+        {
+            HostApplicationServices hs = HostApplicationServices.Current;
+            string fullPath = hs.FindFile(doc.Name, db, FindFileHint.Default);
+            return fullPath;
+        }
+
+        public string GetNameOfCurrentDwg()
+        {
+            string fileName = Path.GetFileName(doc.Name);
+            return fileName;
+        }
+
+        /// <summary>
+        /// Get names of the current CAD-drawing layers
+        /// </summary>
+        /// <returns>List of layer names</returns>
         public List<string> GetLayerNamesFromCAD()
         {
             using (var trans = db.TransactionManager.StartOpenCloseTransaction())
@@ -34,39 +53,60 @@ namespace ACADTools.Commands
             }
         }
 
-        //for room polygones
-        public List<RaumpolygonEntity> GetPolygonesFromLayer(string selectedLayer)
+        /// <summary>
+        /// Get all room polygones entities from the selected layer
+        /// </summary>
+        /// <param name="selectedLayer">Name of selected layer</param>
+        /// <returns>List of room polygones entities</returns>
+        public List<RaumpolygonEntity> GetPolygonesFromLayer(string selectedLayer, int decimalPlaces)
         {
-            if (string.IsNullOrEmpty(selectedLayer)) return null;
+            if (string.IsNullOrEmpty(selectedLayer)) return new List<RaumpolygonEntity>(); //empty List
 
             List<RaumpolygonEntity> polygones = new List<RaumpolygonEntity>();
-            ObjectIdCollection dwgPolygones = SelectAllPolygones(selectedLayer);
-            DBObject polygoneObj = null;
+            ObjectIdCollection dwgPolygonIds = GetAllPolygonIds(selectedLayer);
+
+            if (dwgPolygonIds == null || dwgPolygonIds.Count == 0)
+                return polygones;
 
             using (var trans = db.TransactionManager.StartOpenCloseTransaction())
             {
-                //var bt = trans.GetObject(db.BlockTableId, OpenMode.ForRead) as BlockTable;
-                //var ms = trans.GetObject(bt[BlockTableRecord.ModelSpace], OpenMode.ForRead) as BlockTableRecord;
-
-                foreach (ObjectId dwgPolygone in dwgPolygones)
+                try
                 {
-                    polygoneObj = trans.GetObject(dwgPolygone, OpenMode.ForRead);
-                    RaumpolygonEntity polygone = new RaumpolygonEntity
+                    foreach (ObjectId dwgPolygonId in dwgPolygonIds)
                     {
-                        Id = polygoneObj.Id.ToString(),
-                        Handle = polygoneObj.Handle.ToString(), //Referenz Fläche
-                        Name = selectedLayer
-                    };
-                    polygones.Add(polygone);
+                        DBObject polygoneObj = trans.GetObject(dwgPolygonId, OpenMode.ForRead);
+                        if (polygoneObj == null) continue;
+
+                        double area = GetPolygonArea(trans, dwgPolygonId);
+                        double perimeter = GetPolygonPerimeter(trans, dwgPolygonId);
+
+                        RaumpolygonEntity polygone = new RaumpolygonEntity
+                        {
+                            Id = polygoneObj.Id.ToString().ToLowerInvariant(),
+                            Handle = polygoneObj.Handle.Value.ToString("X").ToUpperInvariant(), //Referenz Fläche
+                            Name = selectedLayer,
+                            Area = Math.Round(area, decimalPlaces, MidpointRounding.ToEven),
+                            Perimeter = Math.Round(perimeter, decimalPlaces, MidpointRounding.ToEven)
+                        };
+                        polygones.Add(polygone);
+                    }
+                }
+                catch (Exception)
+                {
+
                 }
             }
             return polygones;
         }
 
-        private ObjectIdCollection SelectAllPolygones(string layerName)
+        /// <summary>
+        /// Get all polygones ids from the current drawing
+        /// </summary>
+        /// <param name="layerName">Name of the selected layer with polygones</param>
+        /// <returns>Collection of ObjectIds from the selected layer</returns>
+        private ObjectIdCollection GetAllPolygonIds(string layerName)
         {
             ObjectIdCollection selObjects = null;
-
             try
             {
                 PromptSelectionResult psr = null;
@@ -79,7 +119,6 @@ namespace ACADTools.Commands
                     new TypedValue(Convert.ToInt32(DxfCode.Start), "POLYLINE"),
                     new TypedValue(Convert.ToInt32(DxfCode.Start), "LWPOLYLINE"),
                     new TypedValue(Convert.ToInt32(DxfCode.Start), "POLYLINE2D"),
-                    new TypedValue(Convert.ToInt32(DxfCode.Start), "POLYLINE3d"),
                     new TypedValue(Convert.ToInt32(DxfCode.Operator), "or>"),
                     new TypedValue(Convert.ToInt32(DxfCode.Operator), "and>")
                 };
@@ -94,13 +133,92 @@ namespace ACADTools.Commands
             }
             catch (System.Exception ex)
             {
-                ed.WriteMessage($"Thron the exceprion during the selecting polylines: {ex.Message}\n{ex.StackTrace}");
+                ed.WriteMessage($"Thrown the exceprion during the selecting polylines: {ex.Message}\n{ex.StackTrace}");
             }
 
             return selObjects;
         }
 
-        //for room blocks
+        /// <summary>
+        /// Get area of polygon
+        /// </summary>
+        /// <param name="trans">Transaction instance</param>
+        /// <param name="dwgPolygonId">ObjectId of polygon</param>
+        /// <returns>Dooble value of area</returns>
+        private double GetPolygonArea(OpenCloseTransaction trans, ObjectId dwgPolygonId)
+        {
+            try
+            {
+                Entity ent = trans.GetObject(dwgPolygonId, OpenMode.ForRead) as Entity;
+                if (ent == null)
+                    return 0.0;  //Fehler anschreiben später
+
+                switch (ent)
+                {
+                    case Polyline polyline:
+                        if (polyline.Closed)
+                            return Math.Abs(polyline.Area);
+                        break;
+
+                    case Polyline2d polyline2D:
+                        if (polyline2D.Closed)
+                            return Math.Abs(polyline2D.Area);
+                        break;
+
+
+                    case Polyline3d polyline3D:
+                        if (polyline3D.Closed)
+                            return Math.Abs(polyline3D.Area);
+                        break;
+                }
+            }
+            catch (System.Exception ex)
+            {
+                ed.WriteMessage($"Thrown the exceprion during the calculating polylines areas: {ex.Message}\n{ex.StackTrace}");
+            }
+
+            return 0.0;
+        }
+
+        /// <summary>
+        /// Get perimeter of polygon
+        /// </summary>
+        /// <param name="trans">Transaction instance</param>
+        /// <param name="dwgPolygonId">ObjectId of polygon</param>
+        /// <returns>Double value of perimeter</returns>
+        private double GetPolygonPerimeter(OpenCloseTransaction trans, ObjectId dwgPolygonId)
+        {
+            try
+            {
+                Entity ent = trans.GetObject(dwgPolygonId, OpenMode.ForRead) as Entity;
+                if (ent == null)
+                    return 0.0;  //Fehler anschreiben später
+
+                switch (ent)
+                {
+                    case Polyline polyline:
+                        return Math.Abs(polyline.Length);
+
+                    case Polyline2d polyline2D:
+                        return Math.Abs(polyline2D.Length);
+
+                    case Polyline3d polyline3D:
+                        return Math.Abs(polyline3D.Length);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                ed.WriteMessage($"Thrown the exceprion during the calculating polylines areas: {ex.Message}\n{ex.StackTrace}");
+            }
+
+            return 0.0;
+        }
+
+        /// <summary>
+        /// Get all blocks entities with room information 
+        /// </summary>
+        /// <param name="selectedLayerInfo">Name of the selected layer with blocks</param>
+        /// <returns>List of room information entities</returns>
         public List<RaumstempelEntity> GetBlocksFromLayer(string selectedLayerInfo)
         {
             if (string.IsNullOrEmpty(selectedLayerInfo)) return null;

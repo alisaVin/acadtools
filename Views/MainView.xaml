@@ -73,22 +73,20 @@
         <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
                   ItemsSource="{Binding LayerNames}"
                   SelectedItem="{Binding SelectedLayerInfo, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-        <CheckBox Grid.Row="1" Grid.Column="3" Margin="15,0,15,0" 
-                  Content="gruppieren" />
+        <!--<CheckBox Grid.Row="1" Grid.Column="3" Margin="15,0,15,0" 
+                  Content="gruppieren" />-->
 
         <!--Schraffur-->
-        <!--IsEnabled="{Binding ElementName=chkHatchingGroup, Path=IsChecked}" -->
         <GroupBox BorderBrush="LightGray"
                   Grid.Row="2" Grid.RowSpan="4"
                   Grid.Column="0" Grid.ColumnSpan="4">
 
             <GroupBox.Header>
-                <CheckBox x:Name="chkHatchingGroup" Grid.Row="2" Grid.Column="0" 
+                <CheckBox x:Name="ChkHatchingGroup" Grid.Row="2" Grid.Column="0" 
                   Style="{StaticResource GroupCheckbox}" Content="Schraffur"
                   IsChecked="{Binding CheckedHatching, Mode=TwoWay}"/>
-                <!--Click="chkHatchingGroup_Checked"-->
             </GroupBox.Header>
-            <Grid x:Name="uiHatchingGroup" IsEnabled="{Binding ElementName=chkHatchingGroup, Path=IsChecked}">
+            <Grid x:Name="UiHatchingGroup" IsEnabled="{Binding ElementName=ChkHatchingGroup, Path=IsChecked}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -102,7 +100,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Label>Layer:</Label>
-                <ComboBox Grid.Column="1" Grid.ColumnSpan="2"/>
+                <ComboBox Grid.Column="1" Grid.ColumnSpan="2" />
                 <CheckBox Grid.Column="3" Margin="15,0,0,0" Content="gruppieren"/>
 
                 <Label Grid.Row="1">Schraffurtyp:</Label>
@@ -121,11 +119,11 @@
                   Grid.Column="0" Grid.ColumnSpan="4">
 
             <GroupBox.Header>
-                <CheckBox x:Name="chkBlockGroup" Grid.Row="6" Grid.Column="0" 
+                <CheckBox x:Name="ChkBlockGroup" Grid.Row="6" Grid.Column="0" 
                           Style="{StaticResource GroupCheckbox}" Content="Block"
                           IsChecked="{Binding CheckedBlock, Mode=TwoWay}"/>
             </GroupBox.Header>
-            <Grid x:Name="uiBlockGroup" IsEnabled="{Binding ElementName=chkBlockGroup, Path=IsChecked}">
+            <Grid x:Name="UiBlockGroup" IsEnabled="{Binding ElementName=ChkBlockGroup, Path=IsChecked}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -138,7 +136,8 @@
                 </Grid.ColumnDefinitions>
 
                 <Label>Layer:</Label>
-                <ComboBox Grid.Column="1" Grid.ColumnSpan="2" />
+                <ComboBox Grid.Column="1" Grid.ColumnSpan="2" 
+                          ItemsSource="{Binding LayerNames}"/>
                 <CheckBox Grid.Column="3" Margin="15,0,0,0" Content="Attribute"
                           IsChecked="{Binding CheckedBlockAttributes, Mode=TwoWay}"/>
 
@@ -151,11 +150,11 @@
                   Grid.Row="9" Grid.RowSpan="2"
                   Grid.Column="0" Grid.ColumnSpan="4">
             <GroupBox.Header>
-                <CheckBox x:Name="chkTextGroup" Grid.Row="9" Grid.Column="0" 
+                <CheckBox x:Name="ChkTextGroup" Grid.Row="9" Grid.Column="0" 
                           Style="{StaticResource GroupCheckbox}" Content="Text"
                           IsChecked="{Binding CheckedText, Mode=TwoWay}"/>
             </GroupBox.Header>
-            <Grid x:Name="uiTextGroup" IsEnabled="{Binding ElementName=chkTextGroup, Path=IsChecked}">
+            <Grid x:Name="UiTextGroup" IsEnabled="{Binding ElementName=ChkTextGroup, Path=IsChecked}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -223,7 +222,7 @@
                 <Label Grid.Row="1" Grid.Column="0">Flächen-Faktor: </Label>
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AreaFactor}"/>
                 <Label Grid.Row="1" Grid.Column="2">Nachkommastellen: </Label>
-                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding AreaDecimalPlaces}"/>
+                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding DecimalPlaces}"/>
                 <Label Grid.Row="2" Grid.Column="0">Ländereinstellung: </Label>
                 <ComboBox Grid.Row="2" Grid.Column="1" 
                           ItemsSource="{Binding AreaCultures}"
@@ -262,7 +261,7 @@
                 <CheckBox Grid.Column="2" Grid.ColumnSpan="2" 
                           Content="Referenz der Flächen" IsChecked="{Binding AreaReferenceCsv, Mode=TwoWay}"/>
                 <CheckBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"
-                          Content="Referenz der Schraffur" IsEnabled="{Binding ElementName=chkHatchingGroup, Path=IsChecked}"
+                          Content="Referenz der Schraffur" IsEnabled="{Binding ElementName=ChkHatchingGroup, Path=IsChecked}"
                           IsChecked="{Binding HatchingReferenceCsv,  Mode=TwoWay}"/>
                 <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"
                           Content="Referenz der Flächeninfürmation" IsChecked="{Binding AreaInfoReferenceCsv, Mode=TwoWay}"/>
@@ -273,7 +272,8 @@
 
         <!--Datei-->
         <Label Grid.Row="23">Dateiname: </Label>
-        <TextBox Grid.Row="23" Grid.Column="1" Grid.ColumnSpan="3" Margin="-40,0,30,0" />
+        <TextBox x:Name="FileNameToSave" Grid.Row="23" Grid.Column="1" Grid.ColumnSpan="3" 
+                 Margin="-40,0,30,0" Text="{Binding SelectedFilePathCsv}"/>
         <Button Grid.Row="23" Grid.Column="3" Style="{StaticResource SelectDirectoryBtnStyle}"
                 Foreground ="DarkSlateGray" Background="White" Content="..." Click="SelectDirectoryBtn_Click"/>
 
@@ -284,7 +284,7 @@
             </Label.Content>
         </Label>
         <Button Grid.Row="24" Grid.Column="2" Grid.ColumnSpan="2"
-                Style="{StaticResource StartBtnStyle}" Content="Start" Command="{Binding GetObjtectsBySelectedLayersCommand}"/>
+                Style="{StaticResource StartBtnStyle}" Content="Start" Command="{Binding StartCommonCommand}"/>
         <Button Grid.Row="24" Grid.Column="3"
                 Content="Zurücksetzen" Command="{Binding ResetPropertiesCommand}"/>
     </Grid>

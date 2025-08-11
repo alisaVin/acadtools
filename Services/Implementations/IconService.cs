@@ -1,19 +1,20 @@
-﻿using System;
+﻿using ACADTools.Services.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 
-namespace ACADTools.Services
+namespace ACADTools.Services.Implementations
 {
     /// <summary>
     /// Extrahiert Icons für Ribbon Buttons aus den Projekt Ressourcen
     /// </summary>
-    public static class IconService
+    public class IconService : IIconService
     {
         private static readonly Dictionary<string, string> _cachedPaths = new Dictionary<string, string>();
         private static readonly string _tempDir = Path.Combine(Path.GetTempPath(), "ACADTools_Icons");
 
-        public static string GetIconPath(string name)
+        public string GetIconPath(string name)
         {
             if (!Directory.Exists(_tempDir))
                 Directory.CreateDirectory(_tempDir);
@@ -59,7 +60,7 @@ namespace ACADTools.Services
         /// <summary>
         /// Aufräumen der temporären Dateien beim Shutdown !!!! Mal testen (vielleicht wird nicht benötigt)
         /// </summary>
-        public static void Cleanup()
+        public void CleanUp()
         {
             try
             {

@@ -6,10 +6,13 @@ using System.Reflection;
 using System.Resources;
 using System.Windows;
 
-namespace ACADTools.Services
+namespace ACADTools.Services.Implementations
 {
     public class DemandLoadingService
     {
+        /// <summary>
+        /// Writes the registry file of the current plug-in to the windows registry editor
+        /// </summary>
         public static void RegisterForAutoLoading()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -70,11 +73,24 @@ namespace ACADTools.Services
             CreateLoadingEntries(name, path, globCmds, locCmds, groups, flags, true);
         }
 
+        /// <summary>
+        /// Removes the plug-in registry file from the Windows registry editor
+        /// </summary>
         public static void UnregisterForAutoLoading()
         {
             RemoveLoadingEntries(true);
         }
 
+        /// <summary>
+        /// Creates registry entries
+        /// </summary>
+        /// <param name="name">Current assembly name</param>
+        /// <param name="path">Current assembly path</param>
+        /// <param name="globCmds">List of AutoCAD global commands names</param>
+        /// <param name="locCmds">List of AutoCAD local commands names</param>
+        /// <param name="groups">List of AutoCAD commands groups</param>
+        /// <param name="flags">Index of AutoCAD command flag for the loading of plug-in</param>
+        /// <param name="currentUser">Set true for the current user hive in the Windows registry editor</param>
         private static void CreateLoadingEntries(
             string name,
             string path,
@@ -134,6 +150,10 @@ namespace ACADTools.Services
             }
         }
 
+        /// <summary>
+        /// Remouves existing entries of plug-in in the registry editor
+        /// </summary>
+        /// <param name="currentUser">Set true for the current user hive in the Windows registry editor</param>
         private static void RemoveLoadingEntries(bool currentUser)
         {
             try

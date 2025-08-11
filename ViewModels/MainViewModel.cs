@@ -1,5 +1,9 @@
 ﻿using ACADTools.Commands;
 using ACADTools.Models;
+using ACADTools.Services.Contracts;
+using ACADTools.Services.Implementations;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -10,42 +14,60 @@ namespace ACADTools.ViewModels
     {
         private readonly ACADApplication _acadApplication;
         private readonly DefaultViewModel _defaultViewModel;
+        //private readonly IAcadDocumentService _acadDocumentService;
+        private ICsvService _csvService;
+
+        public MainViewModel()
+        {
+            _acadApplication = new ACADApplication();
+            _defaultViewModel = new DefaultViewModel();
+            _csvService = new CsvService();
+            LayerNames = _acadApplication.GetLayerNamesFromCAD()
+                                         .OrderBy(x => x).ToList(); //sorted alphabeticaly
+            Polygons = new ObservableCollection<RaumpolygonEntity>();
+            Raumstempeln = new ObservableCollection<RaumstempelEntity>();
+            SelectedFilePathCsv = _acadApplication.GetFullPathOfCurrentDwg().Replace(".dwg", ".csv"); //später mit service implementieren
+            CurrentDwgName = _acadApplication.GetNameOfCurrentDwg();
+        }
 
         /// <summary>
         /// Gets the Command object bound to the Start button.
         /// The button automatically disabled if CanExecute predicate returns false.
         /// </summary>
         //public RelayCommand GetBlocksFromSelectedLayerCommand => new RelayCommand(execute => LoadPolygonesFromSelectedLayer());
-        public RelayCommand GetObjtectsBySelectedLayersCommand => new RelayCommand(
-            execute => ProcessBothLayers(),
+        public RelayCommand StartCommonCommand => new RelayCommand(
+            execute => ExecuteMultipleProcesses(),
             canExecute => !string.IsNullOrEmpty(SelectedLayer) && !string.IsNullOrEmpty(SelectedLayerInfo));
 
         public RelayCommand ResetPropertiesCommand => new RelayCommand(
             execute => ResetProperies(),
             canExecute => !string.IsNullOrEmpty(SelectedLayer) && !string.IsNullOrEmpty(SelectedLayerInfo)); //&& CheckedBlock == true && CheckedHatching == true
 
-        private void ProcessBothLayers()
+        private void ExecuteMultipleProcesses()
         {
-            LoadPolygonesFromSelectedLayer();
-            LoadBlocksFromSelectedLayer();
+            if (CheckedBlock && CheckedBlockAttributes)
+            {
+                LoadPolygonesFromSelectedLayer();
+                LoadBlocksFromSelectedLayer();
+            }
+            else if (CheckedText)
+            {
+                LoadTextFromSelectedLayer();
+            }
+
+            CreateAndSaveCsvFile(SelectedFilePathCsv, Polygons.ToList(), Raumstempeln.ToList());  // VERBESSERN!!!!
         }
 
-        public MainViewModel()
-        {
-            _acadApplication = new ACADApplication();
-            _defaultViewModel = new DefaultViewModel();
-            LayerNames = _acadApplication.GetLayerNamesFromCAD()
-                                         .OrderBy(x => x).ToList(); //sorted alphabeticaly
-            Polygons = new ObservableCollection<RaumpolygonEntity>();
-            Raumstempeln = new ObservableCollection<RaumstempelEntity>();
-        }
 
-        //for room polygones
+
+        /// <summary>
+        /// Load the polygones entities to the view model
+        /// </summary>
         public void LoadPolygonesFromSelectedLayer()
         {
             if (!string.IsNullOrEmpty(SelectedLayer))
             {
-                var polygones = _acadApplication.GetPolygonesFromLayer(SelectedLayer); //Flächen combobox
+                var polygones = _acadApplication.GetPolygonesFromLayer(SelectedLayer, DecimalPlaces); //Flächen combobox
                 Polygons.Clear();
 
                 foreach (var polygone in polygones)
@@ -56,7 +78,9 @@ namespace ACADTools.ViewModels
             StartRoomNumber = Polygons.Count + 1;
         }
 
-        //for room info blocks
+        /// <summary>
+        /// Load blocks enitites with room information to the view model
+        /// </summary>
         public void LoadBlocksFromSelectedLayer()
         {
             if (!string.IsNullOrEmpty(SelectedLayerInfo))
@@ -69,18 +93,35 @@ namespace ACADTools.ViewModels
                     Raumstempeln.Add(block);
                 }
             }
-            //MessageBox.Show($"You have {Raumstempeln.Count} blocks to import");
         }
 
+
+        private void LoadTextFromSelectedLayer()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Creates a new .csv file and saves that with room polygones and room information data records
+        /// </summary>
+        /// <param name="saveFilePath">Path to save .csv file</param>
+        private void CreateAndSaveCsvFile(string saveFilePath, List<RaumpolygonEntity> polygons, List<RaumstempelEntity> raumstempeln)
+        {
+            _csvService.CreateAndSaveCsv(saveFilePath, polygons, raumstempeln);
+        }
+
+        /// <summary>
+        /// Reset input properies to the default values
+        /// </summary>
         public void ResetProperies()
         {
-            //try to make this later https://www.codeproject.com/Articles/158591/Resetting-a-View-Model-in-WPF-MVVM-applications-wi
-
             CopyPropertiesFrom(_defaultViewModel);
-
         }
 
-        // Hilfsmethode für viele Properties ANSCHAUEN
+        /// <summary>
+        /// Copy default properties from the default view model
+        /// </summary>
+        /// <param name="source">Instance of the default view model</param>
         private void CopyPropertiesFrom(DefaultViewModel source)
         {
             var properties = typeof(DefaultViewModel).GetProperties()

@@ -1,4 +1,5 @@
-﻿using ACADTools.Services;
+﻿using ACADTools.Services.Contracts;
+using ACADTools.Services.Implementations;
 using ACADTools.Views;
 using Autodesk.AutoCAD.Runtime;
 using app = Autodesk.AutoCAD.ApplicationServices.Application;
@@ -14,7 +15,9 @@ namespace ACADTools.Commands
         [CommandMethod("ACADTOOLS")]
         public void ModelessWpfDialogCmd()
         {
-            ACADCommandRibbon.CreateRegisterTab();
+            IIconService iconService = new IconService();
+            var acadCmdRibbon = new ACADCommandRibbon(iconService);
+            acadCmdRibbon.CreateRegisterTab();
         }
         #endregion
 
@@ -34,8 +37,10 @@ namespace ACADTools.Commands
         [CommandMethod("CLOSEACADTOOLS")]
         public void CloseAcadTools()
         {
-            ACADCommandRibbon.RemoveExistingTabs();
-            IconService.Cleanup();
+            IIconService iconService = new IconService();
+            var acadCmdRibbon = new ACADCommandRibbon(iconService);
+            acadCmdRibbon.RemoveExistingTabs();
+            iconService.CleanUp();
         }
         #endregion
 
@@ -47,7 +52,6 @@ namespace ACADTools.Commands
             var res = app.ShowModalWindow(infoDialog);
         }
         #endregion
-
 
         #region Commands to register this plugin
         [CommandMethod("REGACADTOOLS")]

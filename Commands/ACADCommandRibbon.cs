@@ -1,4 +1,4 @@
-﻿using ACADTools.Services;
+﻿using ACADTools.Services.Contracts;
 using Autodesk.AutoCAD.Customization;
 using System;
 using app = Autodesk.AutoCAD.ApplicationServices.Application;
@@ -7,42 +7,37 @@ namespace ACADTools.Commands
 {
     public class ACADCommandRibbon
     {
-        private static string _tabName = "ACADTools_v2";
-        private static string _panelName = "Tools panel";
-        private static CustomizationSection _cs;
-        private static string _currentWorkspace;
-        //private static IconService _iconService;
+        private const string _tabName = "ACADTools_v2";
+        private const string _panelName = "Tools panel";
+
+        private readonly IIconService _iconService;
+        private CustomizationSection _cs;
+        private string _currentWorkspace;
+
+        public ACADCommandRibbon(IIconService iconService)
+        {
+            _iconService = iconService;
+        }
 
         /// <summary>
-        /// Initialisiert die gemeinsamen Parameter
+        /// Initialize the common parameters
         /// </summary>
-        private static void InitializeParameters()
+        private void InitializeParameters()
         {
             _cs = new CustomizationSection((string)app.GetSystemVariable("MENUNAME"));
             _currentWorkspace = (string)app.GetSystemVariable("WSCURRENT");
         }
 
-
         /// <summary>
-        /// Erstellt eine neue ACADTool-Ribbon Panel mit Buttonsin AutoCAD
+        /// Create a new ribbon panel with ribbon buttons in AutoCAD UI
         /// </summary>
-        public static void CreateRegisterTab()
+        public void CreateRegisterTab()
         {
             var doc = app.DocumentManager.MdiActiveDocument;
             var ed = doc.Editor;
 
             try
             {
-                ///<summary>
-                ///Die AutoCAD-Systemvariable MENUNAME gibt den Dateinamen des Menüs (CUI oder CUIx, soweit es das Menüband betrifft) an.
-                ///Das Objekt CustomizationSection ist das Stammobjekt für die AutoCAD CUI .NET API, und alles sollte von dort aus beginnen.
-                ///<params name="cs">Die CustomizationSection-Instanz sollte möglichst einzeln verwaltet werden. Andernfalls können Synchronisierungsprobleme auftreten.</params>
-                ///<params name="curWorkspace">Eine weitere AutoCAD-Systemvariable WSCURRENT gibt den aktuellen Arbeitsbereichsnamen an.</params>
-                /// </summary>
-
-                //CustomizationSection cs = new CustomizationSection((string)app.GetSystemVariable("MENUNAME"));
-                //string curWorkspace = (string)app.GetSystemVariable("WSCURRENT");
-
                 InitializeParameters();
                 RemoveExistingTabs();
                 CreateRibbonUI();
@@ -61,23 +56,23 @@ namespace ACADTools.Commands
         }
 
         /// <summary>
-        /// Entfernt existierende Ribbon Tabs 
+        /// Remove the existeing ribbon tabs of plug-in
         /// </summary>
-        /// <param name="cs">CustomizationSection Instanz</param>
-        /// <param name="currentWorkspace">WSCURRENT</param>
-        /// <param name="tabName">Name der aktuellen Ribbon Tab</param>
-        /// <param name="panelName">Name des zugehörigen Ribbon Panels</param>
-        public static void RemoveExistingTabs()
+        /// <param name="cs">Customization section instance</param>
+        /// <param name="currentWorkspace">Current workspace variable </param>
+        /// <param name="tabName">Name of the current ribbon tab</param>
+        /// <param name="panelName">Name of the corresponding ribbon panel</param>
+        public void RemoveExistingTabs()
         {
             try
             {
-                // Falls Parameter noch nicht initialisiert wurden
+                // If parameters have not yet been initialized
                 if (_cs == null)
                 {
                     InitializeParameters();
                 }
 
-                // Workspace-Referenzen entfernen 
+                // Remove workspace references
                 int curWsIndex = _cs.Workspaces.IndexOfWorkspaceName(_currentWorkspace);
                 if (curWsIndex >= 0)
                 {
@@ -92,7 +87,7 @@ namespace ACADTools.Commands
                     }
                 }
 
-                // TabSources entfernen
+                // Remouve tab sources
                 RibbonRoot root = _cs.MenuGroup.RibbonRoot;
                 for (int i = root.RibbonTabSources.Count - 1; i >= 0; i--)
                 {
@@ -103,7 +98,7 @@ namespace ACADTools.Commands
                     }
                 }
 
-                // PanelSources entfernen 
+                // Remouve panel sources
                 for (int i = root.RibbonPanelSources.Count - 1; i >= 0; i--)
                 {
                     string ribPanelSourceName = root.RibbonPanelSources[i].Name;
@@ -129,7 +124,7 @@ namespace ACADTools.Commands
         /// <param name="currentWorkspace">WSCURRENT</param>
         /// <param name="tabName">Name der aktuellen Ribbon Tab</param>
         /// <param name="panelName">Name des zugehörigen Ribbon Panels</param>
-        private static void CreateRibbonUI()
+        private void CreateRibbonUI()
         {
             //RibbonRoot ist das Stammobjekt für alle CUI-Elemente im Zusammenhang mit dem Menüband,
             //die aus der MenuGroup-Eigenschaft des zuvor erstellten CustomizationSection-Objekts abgerufen werden können.
@@ -174,8 +169,8 @@ namespace ACADTools.Commands
             //Buttons erstellen
             RibbonCommandButton generateBtn = new RibbonCommandButton(largeRow);
             generateBtn.Text = "Flächenlisten generieren";
-            string smallGenerateIcon = IconService.GetIconPath("icons8-new-file-16");
-            string largeGenerateIcon = IconService.GetIconPath("icons8-new-file-32");
+            string smallGenerateIcon = _iconService.GetIconPath("icons8-new-file-16");
+            string largeGenerateIcon = _iconService.GetIconPath("icons8-new-file-32");
 
             MenuMacro menuMac1 = macroGroup.CreateMenuMacro("generateBtn_macro", "^C^CGENERATEAREALISTS", "generateBtn_tag", "Bereitet die Blockdefinitionen zum CSV-Import vor",
                                                             MacroType.Any, smallGenerateIcon, largeGenerateIcon, "generateBtn_labelID");
@@ -188,8 +183,8 @@ namespace ACADTools.Commands
 
             RibbonCommandButton infoBtn = new RibbonCommandButton(firstRow);
             infoBtn.Text = "Info";
-            string smallInfoIcon = IconService.GetIconPath("icons8-information-16");
-            string largeInfoIcon = IconService.GetIconPath("icons8-information-32");
+            string smallInfoIcon = _iconService.GetIconPath("icons8-information-16");
+            string largeInfoIcon = _iconService.GetIconPath("icons8-information-32");
 
             MenuMacro menuMac2 = macroGroup.CreateMenuMacro("infoBtn_macro", "^C^CINFOACADTOOLS", "infoBtn_tag", "Informationen zur aktuellen Plug-In Version",
                                                             MacroType.Any, smallInfoIcon, largeInfoIcon, "infoBtn_labelID");
@@ -202,8 +197,8 @@ namespace ACADTools.Commands
 
             RibbonCommandButton closeBtn = new RibbonCommandButton(secondRow);
             closeBtn.Text = "ACADTools beenden";
-            string smallCloseIcon = IconService.GetIconPath("icons8-close-16");
-            string largeCloseIcon = IconService.GetIconPath("icons8-close-32");
+            string smallCloseIcon = _iconService.GetIconPath("icons8-close-16");
+            string largeCloseIcon = _iconService.GetIconPath("icons8-close-32");
 
             MenuMacro menuMacClose = macroGroup.CreateMenuMacro("closeBtn_macro", "^C^CCLOSEACADTOOLS", "closeBtn_tag", "Beendet die Anwendung vom ACADTools Plug-In",
                                                             MacroType.Any, smallCloseIcon, largeCloseIcon, "closeBtn_labelID");
@@ -228,3 +223,9 @@ namespace ACADTools.Commands
         }
     }
 }
+///<summary>
+///Die AutoCAD-Systemvariable MENUNAME gibt den Dateinamen des Menüs (CUI oder CUIx, soweit es das Menüband betrifft) an.
+///Das Objekt CustomizationSection ist das Stammobjekt für die AutoCAD CUI .NET API, und alles sollte von dort aus beginnen.
+///<params name="cs">Die CustomizationSection-Instanz sollte möglichst einzeln verwaltet werden. Andernfalls können Synchronisierungsprobleme auftreten.</params>
+///<params name="curWorkspace">Eine weitere AutoCAD-Systemvariable WSCURRENT gibt den aktuellen Arbeitsbereichsnamen an.</params>
+/// </summary>
