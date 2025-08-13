@@ -19,7 +19,7 @@ namespace ACADTools.Services.Implementations
             if (!Directory.Exists(_tempDir))
                 Directory.CreateDirectory(_tempDir);
 
-            // Cache prüfen
+            // Cache prüfen --> cash verweist auf das leere Verzeichnis, soll geleert werden
             if (_cachedPaths.ContainsKey(name))
                 return _cachedPaths[name];
 
@@ -65,7 +65,10 @@ namespace ACADTools.Services.Implementations
             try
             {
                 if (Directory.Exists(_tempDir))
+                {
                     Directory.Delete(_tempDir, true);
+                    _cachedPaths.Clear();
+                }
             }
             catch { }
         }

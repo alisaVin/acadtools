@@ -43,7 +43,5 @@ namespace ACADTools.ViewModels
         /// </summary>
         /// <param name="parameter">Action parameter (may be null).</param>
         public bool CanExecute(object parameter) => canExecute == null || canExecute(parameter);
-
-
     }
 }

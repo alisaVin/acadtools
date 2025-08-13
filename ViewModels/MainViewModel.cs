@@ -2,7 +2,6 @@
 using ACADTools.Models;
 using ACADTools.Services.Contracts;
 using ACADTools.Services.Implementations;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -26,7 +25,8 @@ namespace ACADTools.ViewModels
                                          .OrderBy(x => x).ToList(); //sorted alphabeticaly
             Polygons = new ObservableCollection<RaumpolygonEntity>();
             Raumstempeln = new ObservableCollection<RaumstempelEntity>();
-            SelectedFilePathCsv = _acadApplication.GetFullPathOfCurrentDwg().Replace(".dwg", ".csv"); //später mit service implementieren
+            Texts = new ObservableCollection<TextRaumstempelEntity>();
+            SelectedFilePathCsv = _acadApplication.GetFullPathOfCurrentDwg().Replace(".dwg", ".csv"); //später mit service implementieren //getrennt starten
             CurrentDwgName = _acadApplication.GetNameOfCurrentDwg();
         }
 
@@ -45,41 +45,39 @@ namespace ACADTools.ViewModels
 
         private void ExecuteMultipleProcesses()
         {
-            if (CheckedBlock && CheckedBlockAttributes)
+            if (!CheckedBlock && !CheckedBlockAttributes)
+            {
+                LoadTextFromSelectedLayer();
+            }
+            else
             {
                 LoadPolygonesFromSelectedLayer();
                 LoadBlocksFromSelectedLayer();
             }
-            else if (CheckedText)
-            {
-                LoadTextFromSelectedLayer();
-            }
 
-            CreateAndSaveCsvFile(SelectedFilePathCsv, Polygons.ToList(), Raumstempeln.ToList());  // VERBESSERN!!!!
+            CreateAndSaveCsvFile(SelectedFilePathCsv, Polygons.ToList(), Raumstempeln.ToList(), Texts.ToList());  // VERBESSERN!!!!
         }
 
-
-
         /// <summary>
-        /// Load the polygones entities to the view model
+        /// Load the polygons entities to the view model
         /// </summary>
         public void LoadPolygonesFromSelectedLayer()
         {
             if (!string.IsNullOrEmpty(SelectedLayer))
             {
-                var polygones = _acadApplication.GetPolygonesFromLayer(SelectedLayer, DecimalPlaces); //Flächen combobox
+                var polygons = _acadApplication.GetPolygonesFromLayer(SelectedLayer, DecimalPlaces); //Flächen combobox
                 Polygons.Clear();
 
-                foreach (var polygone in polygones)
+                foreach (var polygon in polygons)
                 {
-                    Polygons.Add(polygone);
+                    Polygons.Add(polygon);
                 }
+                PolygonsCount = Polygons.Count;
             }
-            StartRoomNumber = Polygons.Count + 1;
         }
 
         /// <summary>
-        /// Load blocks enitites with room information to the view model
+        /// Loads blocks enitites with room information to the view model
         /// </summary>
         public void LoadBlocksFromSelectedLayer()
         {
@@ -95,19 +93,27 @@ namespace ACADTools.ViewModels
             }
         }
 
-
+        /// <summary>
+        /// Loads text entities with room information to the view model
+        /// </summary>
         private void LoadTextFromSelectedLayer()
         {
-            throw new NotImplementedException();
+            var texts = _acadApplication.GetAllRoomTextes(SelectedLayerInfo);
+            Texts.Clear();
+
+            foreach (var text in texts)
+            {
+                Texts.Add(text);
+            }
         }
 
         /// <summary>
         /// Creates a new .csv file and saves that with room polygones and room information data records
         /// </summary>
         /// <param name="saveFilePath">Path to save .csv file</param>
-        private void CreateAndSaveCsvFile(string saveFilePath, List<RaumpolygonEntity> polygons, List<RaumstempelEntity> raumstempeln)
+        private void CreateAndSaveCsvFile(string saveFilePath, List<RaumpolygonEntity> polygons, List<RaumstempelEntity> raumstempeln, List<TextRaumstempelEntity> texts)
         {
-            _csvService.CreateAndSaveCsv(saveFilePath, polygons, raumstempeln);
+            _csvService.CreateAndSaveCsv(saveFilePath, polygons, raumstempeln, texts);
         }
 
         /// <summary>

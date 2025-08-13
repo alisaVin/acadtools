@@ -91,9 +91,9 @@ namespace ACADTools.Commands
                         polygones.Add(polygone);
                     }
                 }
-                catch (Exception)
+                catch (System.Exception ex)
                 {
-
+                    ed.WriteMessage($"Thrown the exceprion during the loading of polygone's entities: {ex.Message}\n{ex.StackTrace}");
                 }
             }
             return polygones;
@@ -133,7 +133,7 @@ namespace ACADTools.Commands
             }
             catch (System.Exception ex)
             {
-                ed.WriteMessage($"Thrown the exceprion during the selecting polylines: {ex.Message}\n{ex.StackTrace}");
+                ed.WriteMessage($"Thrown the exceprion during the polygon ids export: {ex.Message}\n{ex.StackTrace}");
             }
 
             return selObjects;
@@ -221,9 +221,8 @@ namespace ACADTools.Commands
         /// <returns>List of room information entities</returns>
         public List<RaumstempelEntity> GetBlocksFromLayer(string selectedLayerInfo)
         {
-            if (string.IsNullOrEmpty(selectedLayerInfo)) return null;
-
             List<RaumstempelEntity> blDefEntities = new List<RaumstempelEntity>();
+            if (string.IsNullOrEmpty(selectedLayerInfo)) return blDefEntities;
 
             using (var trans = db.TransactionManager.StartOpenCloseTransaction())
             {
@@ -252,6 +251,57 @@ namespace ACADTools.Commands
                 }
             }
             return blDefEntities;
+        }
+
+        /// <summary>
+        /// Load all room texts entities with room information
+        /// </summary>
+        /// <param name="selectedLayer">Name of the selected layer with texts</param>
+        /// <returns>List of text entities</returns>
+        public List<TextRaumstempelEntity> GetAllRoomTextes(string selectedLayer)
+        {
+            List<TextRaumstempelEntity> texts = new List<TextRaumstempelEntity>();
+            if (string.IsNullOrEmpty(selectedLayer)) return texts;
+
+            TypedValue[] tvs = new[]
+            {
+                new TypedValue((int)DxfCode.Start, "TEXT,MTEXT"), // only DBText or MText
+                new TypedValue((int)DxfCode.LayerName, selectedLayer), // on the selected Layer
+            };
+            SelectionFilter filter = new SelectionFilter(tvs);
+            PromptSelectionResult selection = ed.SelectAll(filter);
+
+            if (selection.Status != PromptStatus.OK)
+                return texts;
+
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                foreach (ObjectId id in selection.Value.GetObjectIds())
+                {
+                    TextRaumstempelEntity textEntity = new TextRaumstempelEntity();
+                    switch (id.ObjectClass.DxfName)
+                    {
+                        case "TEXT":
+                            DBText text = tr.GetObject(id, OpenMode.ForRead) as DBText;
+                            textEntity.Id = text.Id.ToString().ToUpperInvariant();
+                            textEntity.Handle = text.Handle.ToString().ToUpperInvariant();
+                            textEntity.Text = text.TextString;
+                            break;
+
+                        case "MTEXT":
+                            MText mText = tr.GetObject(id, OpenMode.ForRead) as MText;
+                            textEntity.Id = mText.Id.ToString().ToUpperInvariant();
+                            textEntity.Handle = mText.Handle.ToString().ToUpperInvariant();
+                            textEntity.Text = mText.Text;
+                            break;
+
+                        default: break;
+                    }
+                    texts.Add(textEntity);
+                }
+                tr.Commit();
+            }
+            return texts;
         }
     }
 }

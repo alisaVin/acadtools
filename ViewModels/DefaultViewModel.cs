@@ -1,6 +1,8 @@
 ﻿using ACADTools.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace ACADTools.ViewModels
 {
@@ -10,32 +12,24 @@ namespace ACADTools.ViewModels
         {
             SelectedLayer = null;
             SelectedLayerInfo = null;
-            CheckedHatching = false;
             CheckedBlock = false;
             CheckedBlockAttributes = false;
+            CheckedBlockInsertPoint = null;
             CheckedText = false;
-            RoomNumberPrefixedText = "Raum";
-            StartRoomNumber = 1;
-            RoomNumberSubstitutedText = string.Empty;
-            AreaPrefixedText = string.Empty;
-            AreaSubstitutedText = string.Empty;
-            AreaFactor = 1;
+            AreaSelectedCulture = null;
             DecimalPlaces = 2;
-            AreaSelectedCulture = string.Empty;
-            RoomNumberCsv = true;
-            AreaSizeCsv = true;
-            AreaSizeExplandedCsv = false;
+            HeaderCsv = true;
             DrawingNameCsv = true;
             AreaReferenceCsv = false;
-            HatchingReferenceCsv = false;
             AreaInfoReferenceCsv = false;
-            HeaderCsv = true;
+            PolygonsCount = 0;
             //SelectedFilePathCsv = string.Empty; //mal schauen und besser implementieren
         }
 
         #region Collections
         public ObservableCollection<RaumpolygonEntity> Polygons { get; set; }
         public ObservableCollection<RaumstempelEntity> Raumstempeln { get; set; }
+        public ObservableCollection<TextRaumstempelEntity> Texts { get; set; }
         public List<string> LayerNames { get; set; }
         #endregion
 
@@ -56,14 +50,6 @@ namespace ACADTools.ViewModels
             set { _selectedLayerInfo = value; OnPropertyChanged(); }
         }
 
-        //Hatching GroupBox
-        private bool _checkedHatching;
-        public bool CheckedHatching
-        {
-            get => _checkedHatching;
-            set { _checkedHatching = value; OnPropertyChanged(); }
-        }
-
         //Block GroupBox
         private bool _checkedBlock;
         public bool CheckedBlock
@@ -72,152 +58,128 @@ namespace ACADTools.ViewModels
             set { _checkedBlock = value; OnPropertyChanged(); }
         }
 
+        private string _checkedBlockInsertPoint;
+        public string CheckedBlockInsertPoint
+        {
+            get => _checkedBlockInsertPoint;
+            set { _checkedBlockInsertPoint = value; OnPropertyChanged(); }
+        }
+
+        public enum BlockInsertPointValues
+        {
+            Einfügepunkt,
+            Mittelpunkt
+        }
+
+        public IEnumerable<BlockInsertPointValues> CheckedBlockInsertPointValues
+        {
+            get => Enum.GetValues(typeof(BlockInsertPointValues)).Cast<BlockInsertPointValues>();
+        }
+
         private bool _checkedBlockAttributes;
         public bool CheckedBlockAttributes
         {
-            get { return _checkedBlockAttributes; }
+            get => _checkedBlockAttributes;
             set { _checkedBlockAttributes = value; OnPropertyChanged(); }
         }
 
         //Text GroupBox
         private bool _checkedText;
-
         public bool CheckedText
         {
-            get { return _checkedText; }
+            get => _checkedText;
             set { _checkedText = value; OnPropertyChanged(); }
         }
 
-        //Generation of room numbers GroupBox
-        private string _roomNumberPrefixedText;
-        public string RoomNumberPrefixedText
-        {
-            get { return _roomNumberPrefixedText; }
-            set { _roomNumberPrefixedText = value; OnPropertyChanged(); }
-        }
-
-        private int _startRoomNumber;
-        public int StartRoomNumber
-        {
-            get { return _startRoomNumber; }
-            set { _startRoomNumber = value; OnPropertyChanged(); }
-        }
-
-        private string _roomNumberSubstitutedText;
-        public string RoomNumberSubstitutedText
-        {
-            get { return _roomNumberSubstitutedText; }
-            set { _roomNumberSubstitutedText = value; OnPropertyChanged(); }
-        }
-
-        //Area size GroupBox
-        private string _areaPrefixedText;
-        public string AreaPrefixedText
-        {
-            get { return _areaPrefixedText; }
-            set { _areaPrefixedText = value; OnPropertyChanged(); }
-        }
-
-        private string _areaSubstitutedText;
-        public string AreaSubstitutedText
-        {
-            get { return _areaSubstitutedText; }
-            set { _areaSubstitutedText = value; OnPropertyChanged(); }
-        }
-
-        private int _areaFactor;
-        public int AreaFactor
-        {
-            get { return _areaFactor; }
-            set { _areaFactor = value; OnPropertyChanged(); }
-        }
-
-        private int _decimalPlaces;
-
-        public int DecimalPlaces
-        {
-            get { return _decimalPlaces; }
-            set { _decimalPlaces = value; OnPropertyChanged(); }
-        }
-
+        //Flächengröße GroupBox
         private string _areaSelectedCulture;
-
         public string AreaSelectedCulture
         {
-            get { return _areaSelectedCulture; }
+            get => _areaSelectedCulture;
             set { _areaSelectedCulture = value; OnPropertyChanged(); }
         }
 
+        public enum CommonCulture
+        {
+            German,
+            English
+        }
+
+        public IEnumerable<CommonCulture> CommonCultureValues
+        {
+            get => Enum.GetValues(typeof(CommonCulture)).Cast<CommonCulture>();
+        }
+
+        private int _decimalPlaces;
+        public int DecimalPlaces
+        {
+            get => _decimalPlaces;
+            set { _decimalPlaces = value; OnPropertyChanged(); }
+        }
+
         //Settings for CSV file
-        private bool _roomNumberCsv;
-        public bool RoomNumberCsv
+        private bool _headerCsv;
+        public bool HeaderCsv
         {
-            get { return _roomNumberCsv; }
-            set { _roomNumberCsv = value; OnPropertyChanged(); }
-        }
-
-        private bool _areaSizeCsv;
-        public bool AreaSizeCsv
-        {
-            get { return _areaSizeCsv; }
-            set { _areaSizeCsv = value; OnPropertyChanged(); }
-        }
-
-        private bool _areaSizeExplandedCsv;
-        public bool AreaSizeExplandedCsv
-        {
-            get { return _areaSizeExplandedCsv; }
-            set { _areaSizeExplandedCsv = value; OnPropertyChanged(); }
+            get => _headerCsv;
+            set { _headerCsv = value; OnPropertyChanged(); }
         }
 
         private bool _drawingNameCsv;
         public bool DrawingNameCsv
         {
-            get { return _drawingNameCsv; }
+            get => _drawingNameCsv;
             set { _drawingNameCsv = value; OnPropertyChanged(); }
+        }
+
+        private bool _areaSizeCsv;
+        public bool AreaSizeCsv
+        {
+            get => _areaSizeCsv;
+            set { _areaSizeCsv = value; OnPropertyChanged(); }
         }
 
         private bool _areaReferenceCsv;
         public bool AreaReferenceCsv
         {
-            get { return _areaReferenceCsv; }
+            get => _areaReferenceCsv;
             set { _areaReferenceCsv = value; OnPropertyChanged(); }
-        }
-
-        private bool _hatchingReferenceCsv;
-        public bool HatchingReferenceCsv
-        {
-            get { return _hatchingReferenceCsv; }
-            set { _hatchingReferenceCsv = value; OnPropertyChanged(); }
         }
 
         private bool _areaInfoReferenceCsv;
         public bool AreaInfoReferenceCsv
         {
-            get { return _areaInfoReferenceCsv; }
+            get => _areaInfoReferenceCsv;
             set { _areaInfoReferenceCsv = value; OnPropertyChanged(); }
         }
 
-        private bool _headerCsv;
-        public bool HeaderCsv
+        private bool _areaPerimeterCsv;
+        public bool AreaPerimeterCsv
         {
-            get { return _headerCsv; }
-            set { _headerCsv = value; OnPropertyChanged(); }
+            get => _areaPerimeterCsv;
+            set { _areaPerimeterCsv = value; OnPropertyChanged(); }
         }
 
         private string _selectedFilePathCsv;
         public string SelectedFilePathCsv
         {
-            get { return _selectedFilePathCsv; }
+            get => _selectedFilePathCsv;
             set { _selectedFilePathCsv = value; OnPropertyChanged(); }
         }
 
         private string _currentDwgName;
-
         public string CurrentDwgName
         {
-            get { return _currentDwgName; }
+            get => _currentDwgName;
             set { _currentDwgName = value; OnPropertyChanged(); }
+        }
+
+        private int _polygonsCount;
+
+        public int PolygonsCount
+        {
+            get => _polygonsCount;
+            set { _polygonsCount = value; OnPropertyChanged(); }
         }
         #endregion
     }
