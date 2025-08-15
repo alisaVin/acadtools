@@ -1,7 +1,10 @@
-﻿using ACADTools.Models;
+﻿using ACADTools.Models.Importing;
+using ACADTools.Models.Processing;
 using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.BoundaryRepresentation;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Geometry;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,6 +28,7 @@ namespace ACADTools.Commands
         }
 
         //später als service bereitstellen ???
+        #region Current Dwg Methods
         public string GetFullPathOfCurrentDwg()
         {
             HostApplicationServices hs = HostApplicationServices.Current;
@@ -52,7 +56,9 @@ namespace ACADTools.Commands
                             .ToList();
             }
         }
+        #endregion
 
+        #region Work with polygons
         /// <summary>
         /// Get all room polygones entities from the selected layer
         /// </summary>
@@ -82,11 +88,11 @@ namespace ACADTools.Commands
 
                         RaumpolygonEntity polygone = new RaumpolygonEntity
                         {
-                            Id = polygoneObj.Id.ToString().ToLowerInvariant(),
+                            Id = polygoneObj.Id.ToString().Replace("(", "").Replace(")", ""),
                             Handle = polygoneObj.Handle.Value.ToString("X").ToUpperInvariant(), //Referenz Fläche
                             Name = selectedLayer,
-                            Area = Math.Round(area, decimalPlaces, MidpointRounding.ToEven),
-                            Perimeter = Math.Round(perimeter, decimalPlaces, MidpointRounding.ToEven)
+                            Area = Math.Round(area, decimalPlaces),
+                            Perimeter = Math.Round(perimeter, decimalPlaces)
                         };
                         polygones.Add(polygone);
                     }
@@ -135,7 +141,6 @@ namespace ACADTools.Commands
             {
                 ed.WriteMessage($"Thrown the exceprion during the polygon ids export: {ex.Message}\n{ex.StackTrace}");
             }
-
             return selObjects;
         }
 
@@ -210,10 +215,11 @@ namespace ACADTools.Commands
             {
                 ed.WriteMessage($"Thrown the exceprion during the calculating polylines areas: {ex.Message}\n{ex.StackTrace}");
             }
-
             return 0.0;
         }
+        #endregion
 
+        #region Work with blocks
         /// <summary>
         /// Get all blocks entities with room information 
         /// </summary>
@@ -221,8 +227,9 @@ namespace ACADTools.Commands
         /// <returns>List of room information entities</returns>
         public List<RaumstempelEntity> GetBlocksFromLayer(string selectedLayerInfo)
         {
-            List<RaumstempelEntity> blDefEntities = new List<RaumstempelEntity>();
-            if (string.IsNullOrEmpty(selectedLayerInfo)) return blDefEntities;
+            List<RaumstempelEntity> blEntities = new List<RaumstempelEntity>();
+            List<RaumstempelEntity> errBlEntities = new List<RaumstempelEntity>();
+            if (string.IsNullOrEmpty(selectedLayerInfo)) return blEntities;
 
             using (var trans = db.TransactionManager.StartOpenCloseTransaction())
             {
@@ -242,17 +249,22 @@ namespace ACADTools.Commands
                         var btr = trans.GetObject(br.BlockTableRecord, OpenMode.ForRead) as BlockTableRecord;
                         RaumstempelEntity bEntity = new RaumstempelEntity
                         {
-                            Id = br.Id.ToString(),
-                            Handle = br.Handle.ToString(),
+                            Id = br.Id.ToString().Replace("(", "").Replace(")", ""),
+                            Handle = br.Handle.Value.ToString("X").ToUpperInvariant(),
                             BlockDefinitionName = br.Name,
+                            //InsertionPoint = br.Position
                         };
-                        blDefEntities.Add(bEntity);
+                        blEntities.Add(bEntity);
                     }
                 }
             }
-            return blDefEntities;
+            return blEntities;
         }
+        #endregion
 
+
+
+        #region Work with texts
         /// <summary>
         /// Load all room texts entities with room information
         /// </summary>
@@ -284,15 +296,18 @@ namespace ACADTools.Commands
                         case "TEXT":
                             DBText text = tr.GetObject(id, OpenMode.ForRead) as DBText;
                             textEntity.Id = text.Id.ToString().ToUpperInvariant();
-                            textEntity.Handle = text.Handle.ToString().ToUpperInvariant();
+                            textEntity.Handle = text.Handle.Value.ToString("X").ToUpperInvariant();
                             textEntity.Text = text.TextString;
+                            textEntity.InsertPoint = text.Position;
                             break;
 
                         case "MTEXT":
                             MText mText = tr.GetObject(id, OpenMode.ForRead) as MText;
                             textEntity.Id = mText.Id.ToString().ToUpperInvariant();
-                            textEntity.Handle = mText.Handle.ToString().ToUpperInvariant();
-                            textEntity.Text = mText.Text;
+                            textEntity.Handle = mText.Handle.Value.ToString("X").ToUpperInvariant();
+                            //textEntity.Text = mText.Text;
+                            textEntity.Text = mText.Contents;
+                            textEntity.InsertPoint = mText.Location;
                             break;
 
                         default: break;
@@ -303,6 +318,77 @@ namespace ACADTools.Commands
             }
             return texts;
         }
+        #endregion
+
+
+
+        #region Find points in the polygon
+        public bool FindBlockInsertionPointInsidePolygon(Transaction tr, ObjectId polygonId, List<RaumstempelDTO> blocks) //, ObjectIdCollection polygonIds
+        {
+            try
+            {
+                var polyline = tr.GetObject(polygonId, OpenMode.ForRead) as Polyline;
+                if (polyline == null || !polyline.Closed) return false;   //<---------------Exception handling
+
+                DBObjectCollection curves = new DBObjectCollection();
+                curves.Add(polyline);
+
+                using (DBObjectCollection regions = Region.CreateFromCurves(curves))
+                using (Region region = (Region)regions[0])
+                {
+                    foreach (var block in blocks)
+                    {
+                        if (GetPointContainment(region, block.InsertionPoint) == PointContainment.Inside)
+                            return true;
+                        //can also create a list of objects, that should be added on the ERR_OBJEKTE layer
+                    }
+                }
+                return false;
+            }
+            catch (System.Exception) { return false; }
+        }
+
+        private PointContainment GetPointContainment(Region region, Point3d point)
+        {
+            PointContainment result = PointContainment.Outside;
+            using (Brep brep = new Brep(region))
+            {
+                if (brep != null)
+                {
+                    using (BrepEntity ent = brep.GetPointContainment(point, out result))
+                    {
+                        if (ent is Autodesk.AutoCAD.BoundaryRepresentation.Face)
+                        {
+                            result = PointContainment.Inside;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        #endregion
+
+        public void AddErrorObjLayer(Transaction tr)
+        {
+            using (tr)
+            {
+                var lt = tr.GetObject(db.LayerTableId, OpenMode.ForRead) as LayerTable;
+                if (!lt.Has("ERR_OBJEKTE"))
+                {
+                    lt.UpgradeOpen();
+                    var newLayer = new LayerTableRecord();
+                    newLayer.Name = "ERR_OBJEKTE";
+                    newLayer.LineWeight = LineWeight.LineWeight018;
+                    newLayer.Description = "Der Layer mit Error-Objekte";
+                    newLayer.Color = Autodesk.AutoCAD.Colors.Color.FromRgb(255, 0, 0);
+                    lt.Add(newLayer);
+                    tr.AddNewlyCreatedDBObject(newLayer, true);
+                }
+                tr.Commit();
+                db.Clayer = lt["ERR_OBJEKTE"];
+            }
+        }
+
     }
 }
 
@@ -323,19 +409,3 @@ namespace ACADTools.Commands
 //                             };
 //                         })
 //                         .ToList();
-
-
-// Build a filter list so that only entities
-// on the specified layer are selected
-//TypedValue[] tvs = new TypedValue[1]
-//{
-//    new TypedValue((int)DxfCode.LayerName, layerName)
-//};
-
-//SelectionFilter sf = new SelectionFilter(tvs);
-//PromptSelectionResult psr = ed.SelectAll(sf);
-
-//if (psr.Status == PromptStatus.OK)
-//    return new ObjectIdCollection(psr.Value.GetObjectIds());
-//else
-//    return new ObjectIdCollection();

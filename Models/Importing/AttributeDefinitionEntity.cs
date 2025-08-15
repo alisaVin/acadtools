@@ -1,4 +1,4 @@
-﻿namespace ACADTools.Models
+﻿namespace ACADTools.Models.Importing
 {
     public class AttributeDefinitionEntity
     {

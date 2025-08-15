@@ -1,4 +1,4 @@
-﻿using ACADTools.Models;
+﻿using ACADTools.Models.Importing;
 using ACADTools.Services.Contracts;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -8,7 +8,7 @@ using System.IO;
 
 namespace ACADTools.Services.Implementations
 {
-    // Weiter machen
+    // DYNAMISCH UMSCHREIBEN
     public class CsvService : ICsvService
     {
         public void CreateAndSaveCsv(string saveFilePath, List<RaumpolygonEntity> polygons, List<RaumstempelEntity> raumstempeln, List<TextRaumstempelEntity> texts)
@@ -29,16 +29,20 @@ namespace ACADTools.Services.Implementations
                 csv.WriteHeader<RaumstempelEntity>();
                 csv.WriteHeader<TextElementEnumerator>();
                 csv.NextRecord();
+                //csv.WriteRecords(polygons);
+                //csv.WriteRecords(raumstempeln);
+                //csv.WriteRecords(texts);
 
                 foreach (var polygon in polygons)
                 {
-                    writer.WriteLine($"=\"{polygon.Id}\";{polygon.Handle};{polygon.Name};{polygon.Area};{polygon.Perimeter};"); // KONFIGURIEREN UND UMSCHREIBEN FÜR ALLE ENTITIES
+                    writer.WriteLine($"=\"{polygon.Id}\";{polygon.Handle};{polygon.Name};{polygon.Area:F2};{polygon.Perimeter:F2};"); // KONFIGURIEREN UND UMSCHREIBEN FÜR ALLE ENTITIES
 
                     //for (int i = 0; i < block.Attributes.Count; i++)
                     //{
                     //    var attribute = block.Attributes[i];
                     //    writer.WriteLine($";;=\"{attribute.CadIdAttribute}\";{attribute.AttributeName};{attribute.AttributeValue};");
                     //}
+                    writer.Flush();
                 }
 
                 foreach (var text in texts)

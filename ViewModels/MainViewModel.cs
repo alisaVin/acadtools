@@ -1,5 +1,5 @@
 ﻿using ACADTools.Commands;
-using ACADTools.Models;
+using ACADTools.Models.Importing;
 using ACADTools.Services.Contracts;
 using ACADTools.Services.Implementations;
 using System.Collections.Generic;
@@ -45,15 +45,12 @@ namespace ACADTools.ViewModels
 
         private void ExecuteMultipleProcesses()
         {
+            LoadPolygonesFromSelectedLayer();
+
             if (!CheckedBlock && !CheckedBlockAttributes)
-            {
                 LoadTextFromSelectedLayer();
-            }
             else
-            {
-                LoadPolygonesFromSelectedLayer();
                 LoadBlocksFromSelectedLayer();
-            }
 
             CreateAndSaveCsvFile(SelectedFilePathCsv, Polygons.ToList(), Raumstempeln.ToList(), Texts.ToList());  // VERBESSERN!!!!
         }

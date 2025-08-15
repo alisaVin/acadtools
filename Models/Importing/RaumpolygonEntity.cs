@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
-namespace ACADTools.Models
+namespace ACADTools.Models.Importing
 {
     public class RaumpolygonEntity
     {
