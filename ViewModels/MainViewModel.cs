@@ -2,6 +2,7 @@
 using ACADTools.Models.Importing;
 using ACADTools.Services.Contracts;
 using ACADTools.Services.Implementations;
+using Microsoft.Extensions.DependencyInjection; //für IOC-Container
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,11 +14,23 @@ namespace ACADTools.ViewModels
     {
         private readonly ACADApplication _acadApplication;
         private readonly DefaultViewModel _defaultViewModel;
-        //private readonly IAcadDocumentService _acadDocumentService;
+        //private readonly IAcadDocumentService _acadDocumentService; //<--------------------------------- Dependency Injection
         private ICsvService _csvService;
+        //public IAsyncRelayCommand StartCommonCommand { get; set; }//  <------------------------------------- INTEGRIEREN!!!
 
         public MainViewModel()
         {
+            //_acadDocumentService = acadDocumentService;
+
+            //IOC Container
+            using (var serviceProvider = new ServiceCollection()
+                                             .AddTransient<IAcadDocumentService, AcadDocumentService>()
+                                             .AddTransient<ICsvService, CsvService>().BuildServiceProvider()) //creates service provider with new service instances
+            {
+                var acadDocumentService = serviceProvider.GetRequiredService<AcadDocumentService>();
+                acadDocumentService.GetNameOfCurrentDwg(); //get the name of dwg with dependency injection 
+            }
+
             _acadApplication = new ACADApplication();
             _defaultViewModel = new DefaultViewModel();
             _csvService = new CsvService();
@@ -26,9 +39,21 @@ namespace ACADTools.ViewModels
             Polygons = new ObservableCollection<RaumpolygonEntity>();
             Raumstempeln = new ObservableCollection<RaumstempelEntity>();
             Texts = new ObservableCollection<TextRaumstempelEntity>();
+
+            //StartCommonCommand = new AsyncRelayCommand(StartProcessingAsync); //CanStart <---------------------------------- TESTEN!!!
+
             SelectedFilePathCsv = _acadApplication.GetFullPathOfCurrentDwg().Replace(".dwg", ".csv"); //später mit service implementieren //getrennt starten
             CurrentDwgName = _acadApplication.GetNameOfCurrentDwg();
         }
+
+
+        //private async Task StartProcessingAsync()
+        //{
+        //    // 1) Gather (in CAD context)
+        //    //var gatherResult = await Application.DocumentManager
+        //    //    .ExecuteInCommandContextAsync(_ => GatherCadData(SelectedLayer, SelectedLayerInfo), null);
+        //}
+
 
         /// <summary>
         /// Gets the Command object bound to the Start button.
